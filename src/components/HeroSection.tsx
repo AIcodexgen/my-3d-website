@@ -345,6 +345,57 @@ export function HeroSection() {
             </div>
           ))}
 
+          {/* ══ Invisible SVG to hold the 3D Bubble Filter ══ */}
+          <svg width="0" height="0" className="hidden">
+            <defs>
+              <filter id="bubble-3d" x="-30%" y="-30%" width="160%" height="160%">
+                {/* 1. Height map for 3D bulge */}
+                <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur1" />
+                
+                {/* 2. Realistic 3D Specular Lighting (The Glossy Bulge) */}
+                <feSpecularLighting in="blur1" surfaceScale="14" specularConstant="2.5" specularExponent="45" lightingColor="#ffffff" result="specular">
+                  <fePointLight x="100" y="-100" z="200" />
+                </feSpecularLighting>
+                <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularMasked" />
+
+                {/* 3. Inner Edge Highlight (simulates glass thickness) */}
+                <feOffset in="SourceAlpha" dx="0" dy="0" result="offset" />
+                <feGaussianBlur in="offset" stdDeviation="5" result="blur2" />
+                <feComposite operator="out" in="SourceAlpha" in2="blur2" result="innerShadowMask" />
+                <feFlood floodColor="#ffffff" floodOpacity="1" result="whiteGlow" />
+                <feComposite operator="in" in="whiteGlow" in2="innerShadowMask" result="edgeHighlight" />
+
+                {/* 4. Subtle Iridescent Soap Bubble Tint (Cyan & Pink refraction) */}
+                <feFlood floodColor="#00ffff" floodOpacity="0.4" result="cyanGlow" />
+                <feComposite operator="in" in="cyanGlow" in2="innerShadowMask" result="cyanEdge" />
+                <feOffset in="cyanEdge" dx="5" dy="5" result="cyanOffset" />
+
+                <feFlood floodColor="#ff00ff" floodOpacity="0.4" result="pinkGlow" />
+                <feComposite operator="in" in="pinkGlow" in2="innerShadowMask" result="pinkEdge" />
+                <feOffset in="pinkEdge" dx="-5" dy="-5" result="pinkOffset" />
+
+                {/* 5. Extremely faint transparent glass body */}
+                <feFlood floodColor="rgba(255,255,255,0.02)" result="baseGlass" />
+                <feComposite operator="in" in="baseGlass" in2="SourceAlpha" result="glassFill" />
+
+                {/* 6. Environmental Drop Shadow & Green ambient glow */}
+                <feDropShadow dx="0" dy="15" stdDeviation="15" floodColor="rgba(0,0,0,0.5)" in="SourceAlpha" result="dropShadow" />
+                <feDropShadow dx="0" dy="5" stdDeviation="8" floodColor="rgba(119,253,118,0.4)" in="SourceAlpha" result="greenGlow" />
+
+                {/* Merge all layers back together! */}
+                <feMerge>
+                  <feMergeNode in="dropShadow" />
+                  <feMergeNode in="greenGlow" />
+                  <feMergeNode in="glassFill" />
+                  <feMergeNode in="pinkOffset" />
+                  <feMergeNode in="cyanOffset" />
+                  <feMergeNode in="edgeHighlight" />
+                  <feMergeNode in="specularMasked" />
+                </feMerge>
+              </filter>
+            </defs>
+          </svg>
+
           {/* ══ Liquid Balloon Glass 3D "BUILD" Text ══ */}
           <div
             ref={buildContainerRef}
@@ -361,7 +412,6 @@ export function HeroSection() {
                   key={letter + i}
                   className={cn("build-letter", buildVisible && "build-letter--in")}
                   style={{ "--i": i } as React.CSSProperties}
-                  data-letter={letter}
                 >
                   {letter}
                 </span>
@@ -466,7 +516,7 @@ export function HeroSection() {
         .explosion-item-inner:hover .logo-card { transform: scale(1.12); }
 
         /* ══════════════════════════════════════════════
-           LIQUID BALLOON GLASS TEXT
+           TRUE 3D BUBBLE GLASS TEXT via SVG FILTER
            ══════════════════════════════════════════════ */
 
         .build-letter {
@@ -476,8 +526,12 @@ export function HeroSection() {
           font-size: clamp(6rem, 16vw, 15rem);
           line-height: 1.1;
           letter-spacing: 0.03em;
-          color: transparent;
-          transform-style: preserve-3d;
+          
+          /* The color must be solid so SourceAlpha provides a solid mask for the SVG filter */
+          color: black; 
+          
+          /* Apply the incredible 3D bubble SVG filter */
+          filter: url(#bubble-3d);
           
           /* Entrance Animation (Pop in like balloons) */
           opacity: 0;
@@ -489,94 +543,6 @@ export function HeroSection() {
         .build-letter--in {
           opacity: 1;
           transform: scale(1) translateY(0) rotate(0deg);
-        }
-
-        /* ── FRONT FACE: Glass gradient fill + Balloon Stroke ── */
-        .build-letter::before {
-          content: attr(data-letter);
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          
-          /* Highly transparent bubble glass gradient */
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.8) 0%,
-            rgba(255, 255, 255, 0.15) 15%,
-            rgba(255, 255, 255, 0.0) 50%,
-            rgba(255, 255, 255, 0.05) 85%,
-            rgba(255, 255, 255, 0.5) 100%
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          
-          /* Inner highlight simulating a bevel */
-          filter: drop-shadow(0 -4px 6px rgba(255, 255, 255, 0.3))
-                  drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-
-          /* Thick shiny stroke for the bubble edge */
-          -webkit-text-stroke: 3px rgba(255, 255, 255, 0.85);
-          z-index: 2;
-        }
-
-        /* ── BACKGROUND: Thick Liquid 3D Extrusion ── */
-        .build-letter::after {
-          content: attr(data-letter);
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          -webkit-text-fill-color: transparent;
-          -webkit-text-stroke: 0;
-          z-index: 1;
-
-          /* Faint transparent liquid 3D shadow stack */
-          text-shadow:
-            0px 1px 0 rgba(255, 255, 255, 0.15),
-            0px 2px 0 rgba(255, 255, 255, 0.10),
-            0px 3px 0 rgba(255, 255, 255, 0.08),
-            0px 4px 0 rgba(255, 255, 255, 0.05),
-            0px 5px 0 rgba(255, 255, 255, 0.03),
-            0px 6px 0 rgba(255, 255, 255, 0.02),
-            0px 8px 10px rgba(0, 0, 0, 0.2),
-            0px 15px 25px rgba(0, 0, 0, 0.15),
-            0px 30px 60px rgba(119, 253, 118, 0.20);
-        }
-
-        /* ── SHINE SWEEP across glass ── */
-        .build-letter--in::before {
-          animation: glassShine 4s ease-in-out 1.5s infinite;
-        }
-
-        @keyframes glassShine {
-          0%, 100% {
-            background: linear-gradient(
-              180deg,
-              rgba(255, 255, 255, 0.8) 0%,
-              rgba(255, 255, 255, 0.15) 15%,
-              rgba(255, 255, 255, 0.0) 50%,
-              rgba(255, 255, 255, 0.05) 85%,
-              rgba(255, 255, 255, 0.5) 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-          }
-          50% {
-            background: linear-gradient(
-              180deg,
-              rgba(255, 255, 255, 0.95) 0%,
-              rgba(255, 255, 255, 0.40) 25%,
-              rgba(255, 255, 255, 0.15) 50%,
-              rgba(255, 255, 255, 0.40) 75%,
-              rgba(255, 255, 255, 0.8) 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-          }
         }
 
         /* Subtle balloon bobbing animation */
