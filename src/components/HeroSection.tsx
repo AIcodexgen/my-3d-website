@@ -500,25 +500,25 @@ export function HeroSection() {
           align-items: center;
           justify-content: center;
           
-          /* Super glossy glass gradient */
+          /* Highly transparent bubble glass gradient */
           background: linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(255, 255, 255, 0.40) 25%,
-            rgba(255, 255, 255, 0.05) 50%,
-            rgba(255, 255, 255, 0.60) 80%,
-            rgba(255, 255, 255, 0.90) 100%
+            rgba(255, 255, 255, 0.8) 0%,
+            rgba(255, 255, 255, 0.15) 15%,
+            rgba(255, 255, 255, 0.0) 50%,
+            rgba(255, 255, 255, 0.05) 85%,
+            rgba(255, 255, 255, 0.5) 100%
           );
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           
           /* Inner highlight simulating a bevel */
-          filter: drop-shadow(0 -4px 6px rgba(255, 255, 255, 0.4))
-                  drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+          filter: drop-shadow(0 -4px 6px rgba(255, 255, 255, 0.3))
+                  drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 
-          /* Thick stroke for the balloon edge */
-          -webkit-text-stroke: 4px rgba(255, 255, 255, 0.5);
+          /* Thick shiny stroke for the bubble edge */
+          -webkit-text-stroke: 3px rgba(255, 255, 255, 0.85);
           z-index: 2;
         }
 
@@ -534,17 +534,17 @@ export function HeroSection() {
           -webkit-text-stroke: 0;
           z-index: 1;
 
-          /* Deep liquid 3D shadow stack */
+          /* Faint transparent liquid 3D shadow stack */
           text-shadow:
-            0px 1px 0 rgba(255, 255, 255, 0.3),
-            0px 2px 0 rgba(255, 255, 255, 0.2),
-            0px 3px 0 rgba(255, 255, 255, 0.15),
-            0px 4px 0 rgba(255, 255, 255, 0.1),
-            0px 5px 0 rgba(255, 255, 255, 0.08),
-            0px 6px 0 rgba(255, 255, 255, 0.05),
-            0px 8px 10px rgba(0, 0, 0, 0.6),
-            0px 15px 25px rgba(0, 0, 0, 0.4),
-            0px 30px 60px rgba(119, 253, 118, 0.25);
+            0px 1px 0 rgba(255, 255, 255, 0.15),
+            0px 2px 0 rgba(255, 255, 255, 0.10),
+            0px 3px 0 rgba(255, 255, 255, 0.08),
+            0px 4px 0 rgba(255, 255, 255, 0.05),
+            0px 5px 0 rgba(255, 255, 255, 0.03),
+            0px 6px 0 rgba(255, 255, 255, 0.02),
+            0px 8px 10px rgba(0, 0, 0, 0.2),
+            0px 15px 25px rgba(0, 0, 0, 0.15),
+            0px 30px 60px rgba(119, 253, 118, 0.20);
         }
 
         /* ── SHINE SWEEP across glass ── */
@@ -556,11 +556,11 @@ export function HeroSection() {
           0%, 100% {
             background: linear-gradient(
               180deg,
-              rgba(255, 255, 255, 0.95) 0%,
-              rgba(255, 255, 255, 0.40) 25%,
-              rgba(255, 255, 255, 0.05) 50%,
-              rgba(255, 255, 255, 0.60) 80%,
-              rgba(255, 255, 255, 0.90) 100%
+              rgba(255, 255, 255, 0.8) 0%,
+              rgba(255, 255, 255, 0.15) 15%,
+              rgba(255, 255, 255, 0.0) 50%,
+              rgba(255, 255, 255, 0.05) 85%,
+              rgba(255, 255, 255, 0.5) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
@@ -569,10 +569,10 @@ export function HeroSection() {
             background: linear-gradient(
               180deg,
               rgba(255, 255, 255, 0.95) 0%,
-              rgba(255, 255, 255, 0.80) 35%,
-              rgba(255, 255, 255, 0.20) 60%,
-              rgba(255, 255, 255, 0.80) 85%,
-              rgba(255, 255, 255, 0.90) 100%
+              rgba(255, 255, 255, 0.40) 25%,
+              rgba(255, 255, 255, 0.15) 50%,
+              rgba(255, 255, 255, 0.40) 75%,
+              rgba(255, 255, 255, 0.8) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
