@@ -13,10 +13,11 @@ const stars = Array.from({ length: 30 }, (_, i) => ({
   size: 1 + ((i * 0.7) % 1.5),
 }));
 
-/* ─── Explosion Item type ─── */
+/* ─── Explosion Item ─── */
 interface ExplosionItem {
   label: string;
   slug: string;
+  color: string; // hex brand color (no #)
   ring: "inner" | "mid" | "outer";
   txVal: number;
   tyVal: number;
@@ -28,49 +29,49 @@ interface ExplosionItem {
   hideOnMobile?: boolean;
 }
 
-/* ─── Build explosion items in concentric rings ─── */
+/* ─── Build explosion items with BRAND COLORS ─── */
 function buildItemsConfig(): ExplosionItem[] {
   const INNER = [
-    { label: "UI/UX Design", slug: "figma" },
-    { label: "Web Development", slug: "react" },
-    { label: "App Prototypes", slug: "nextdotjs" },
-    { label: "Figma", slug: "figma" },
-    { label: "React", slug: "react" },
-    { label: "Next.js", slug: "nextdotjs" },
-    { label: "Framer", slug: "framer" },
-    { label: "Tailwind CSS", slug: "tailwindcss" },
+    { label: "Figma", slug: "figma", color: "F24E1E" },
+    { label: "React", slug: "react", color: "61DAFB" },
+    { label: "Next.js", slug: "nextdotjs", color: "ffffff" },
+    { label: "Vue.js", slug: "vuedotjs", color: "4FC08D" },
+    { label: "Angular", slug: "angular", color: "DD0031" },
+    { label: "Svelte", slug: "svelte", color: "FF3E00" },
+    { label: "Framer", slug: "framer", color: "0055FF" },
+    { label: "Tailwind", slug: "tailwindcss", color: "06B6D4" },
   ];
 
   const MID = [
-    { label: "TypeScript", slug: "typescript", hide: false },
-    { label: "Supabase", slug: "supabase", hide: false },
-    { label: "Node.js", slug: "nodedotjs", hide: false },
-    { label: "Webflow", slug: "webflow", hide: false },
-    { label: "Spline", slug: "threedotjs", hide: false },
-    { label: "Shopify", slug: "shopify", hide: true },
-    { label: "Storybook", slug: "storybook", hide: true },
-    { label: "Lottie", slug: "lottiefiles", hide: true },
-    { label: "REST APIs", slug: "postman", hide: true },
-    { label: "Vercel", slug: "vercel", hide: false },
-    { label: "Firebase", slug: "firebase", hide: false },
-    { label: "Prisma", slug: "prisma", hide: false },
+    { label: "TypeScript", slug: "typescript", color: "3178C6", hide: false },
+    { label: "Supabase", slug: "supabase", color: "3FCF8E", hide: false },
+    { label: "Node.js", slug: "nodedotjs", color: "5FA04E", hide: false },
+    { label: "Webflow", slug: "webflow", color: "4353FF", hide: false },
+    { label: "Three.js", slug: "threedotjs", color: "ffffff", hide: false },
+    { label: "Shopify", slug: "shopify", color: "7AB55C", hide: true },
+    { label: "Storybook", slug: "storybook", color: "FF4785", hide: true },
+    { label: "Lottie", slug: "lottiefiles", color: "00DDB3", hide: true },
+    { label: "Postman", slug: "postman", color: "FF6C37", hide: true },
+    { label: "Vercel", slug: "vercel", color: "ffffff", hide: false },
+    { label: "Firebase", slug: "firebase", color: "DD2C00", hide: false },
+    { label: "Prisma", slug: "prisma", color: "2D3748", hide: false },
   ];
 
   const OUTER = [
-    { label: "Fast Delivery", slug: "vercel" },
-    { label: "Clean Handoff", slug: "github" },
-    { label: "Mobile First", slug: "apple" },
-    { label: "SEO Ready", slug: "google" },
-    { label: "Startup Focused", slug: "stripe" },
-    { label: "Design Systems", slug: "figma" },
-    { label: "India & USA", slug: "cloudflare" },
-    { label: "Zero Lock-in", slug: "docker" },
+    { label: "GitHub", slug: "github", color: "ffffff" },
+    { label: "Docker", slug: "docker", color: "2496ED" },
+    { label: "Stripe", slug: "stripe", color: "635BFF" },
+    { label: "Google", slug: "google", color: "4285F4" },
+    { label: "Apple", slug: "apple", color: "ffffff" },
+    { label: "Cloudflare", slug: "cloudflare", color: "F38020" },
+    { label: "AWS", slug: "amazonaws", color: "FF9900" },
+    { label: "Notion", slug: "notion", color: "ffffff" },
   ];
 
   const result: ExplosionItem[] = [];
 
   const addRing = (
-    items: { label: string; slug: string; hide?: boolean }[],
+    items: { label: string; slug: string; color: string; hide?: boolean }[],
     ring: "inner" | "mid" | "outer",
     rVw: number,
     rVh: number,
@@ -85,6 +86,7 @@ function buildItemsConfig(): ExplosionItem[] {
       result.push({
         label: item.label,
         slug: item.slug,
+        color: item.color,
         ring,
         txVal: tx,
         tyVal: ty,
@@ -98,9 +100,9 @@ function buildItemsConfig(): ExplosionItem[] {
     });
   };
 
-  addRing(INNER, "inner", 18, 18, 0, 45, 0.85);
-  addRing(MID, "mid", 34, 32, 22.5, 30, 0.65);
-  addRing(OUTER, "outer", 44, 42, 11.25, 45, 0.45);
+  addRing(INNER, "inner", 18, 18, 0, 45, 0.9);
+  addRing(MID, "mid", 34, 32, 22.5, 30, 0.7);
+  addRing(OUTER, "outer", 44, 42, 11.25, 45, 0.5);
 
   return result;
 }
@@ -108,7 +110,7 @@ function buildItemsConfig(): ExplosionItem[] {
 const EXPLOSION_ITEMS = buildItemsConfig();
 const BUILD_LETTERS = ["B", "U", "I", "L", "D"];
 
-/* ─────────────────────── COMPONENT ─────────────────────── */
+/* ═══════════════════════ COMPONENT ═══════════════════════ */
 export function HeroSection() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
@@ -126,22 +128,20 @@ export function HeroSection() {
 
   const [buildVisible, setBuildVisible] = useState(false);
 
-  /* ── Entrance: Trigger "BUILD" letter reveal after mount ── */
+  /* ── Trigger BUILD entrance after mount ── */
   useEffect(() => {
-    const timer = setTimeout(() => setBuildVisible(true), 200);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setBuildVisible(true), 300);
+    return () => clearTimeout(t);
   }, []);
 
   /* ── Desktop mouse parallax ── */
   useEffect(() => {
     if (window.innerWidth < 768) return;
     let tx = 0, ty = 0, cx = 0, cy = 0, raf: number;
-
     const onMove = (e: MouseEvent) => {
       tx = e.clientX - window.innerWidth / 2;
       ty = e.clientY - window.innerHeight / 2;
     };
-
     const tick = () => {
       cx += (tx - cx) * 0.06;
       cy += (ty - cy) * 0.06;
@@ -149,7 +149,6 @@ export function HeroSection() {
       stickyRef.current?.style.setProperty("--mouse-y", cy.toFixed(2));
       raf = requestAnimationFrame(tick);
     };
-
     window.addEventListener("mousemove", onMove);
     raf = requestAnimationFrame(tick);
     return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
@@ -166,26 +165,24 @@ export function HeroSection() {
       const scrollY = window.scrollY - wrapper.offsetTop;
       const total = wH - vH;
       if (total <= 0) return;
-      const p = clamp(scrollY / total, 0, 1); // master scroll progress 0..1
+      const p = clamp(scrollY / total, 0, 1);
       const mobile = window.innerWidth < 768;
 
-      /* ── Phase 1: BUILD sinks (0% → 30%) ── */
+      /* Phase 1: BUILD sinks (0% → 30%) */
       if (buildContainerRef.current) {
         const sink = clamp(p / 0.30, 0, 1);
         const scale = 1 - 0.35 * sink;
         const opacity = 1 - sink * sink;
-        const blur = sink * 12;
-        const rotX = sink * 25; // 3D tilt as it sinks
+        const blur = sink * 14;
+        const rotX = sink * 30;
+        const ty = sink * 80;
         buildContainerRef.current.style.transform =
-          `translate(-50%, -50%) perspective(800px) rotateX(${rotX}deg) scale(${scale})`;
+          `translate(-50%, calc(-50% + ${ty}px)) perspective(900px) rotateX(${rotX}deg) scale(${scale})`;
         buildContainerRef.current.style.opacity = opacity.toString();
         buildContainerRef.current.style.filter = `blur(${blur}px)`;
       }
 
-      /* ── Phase 2: Morph text → logo (20% → 45%) ── */
-      const morph = clamp((p - 0.20) / 0.25, 0, 1);
-
-      /* ── Phase 3: Shockwave rings (22% → 40%) ── */
+      /* Phase 2: Shockwave rings (22% → 40%) */
       const s1 = clamp((p - 0.22) / 0.18, 0, 1);
       if (sw1Ref.current) {
         sw1Ref.current.setAttribute("r", `${s1 * 55}vw`);
@@ -197,7 +194,7 @@ export function HeroSection() {
         sw2Ref.current.style.opacity = `${(1 - s2) * 0.4}`;
       }
 
-      /* ── Phase 4: Explosion trajectories (5% → 70%) ── */
+      /* Phase 3: Logo explosion trajectories (5% → 70%) */
       EXPLOSION_ITEMS.forEach((item, idx) => {
         const el = itemRefs.current[idx];
         if (!el) return;
@@ -208,19 +205,13 @@ export function HeroSection() {
         }
         el.style.display = "";
 
-        // Each item's text and logo children
-        const textEl = el.querySelector<HTMLElement>(".item-text");
-        const logoEl = el.querySelector<HTMLElement>(".item-logo");
-
         if (p <= 0.70) {
-          const start = 0.04 + idx * 0.006;
+          const start = 0.04 + idx * 0.005;
           const dur = 0.70 - start;
           const ip = clamp((p - start) / dur, 0, 1);
           const e = easeOutExpo(ip);
-
           const tx = mobile ? item.txMobileVal : item.txVal;
           const ty = mobile ? item.tyMobileVal : item.tyVal;
-
           el.style.transform = `translate(calc(-50% + ${tx * e}vw), calc(-50% + ${ty * e}vh)) scale(${0.3 + 0.7 * e})`;
           el.style.opacity = `${e * item.finalOpacity}`;
           el.classList.remove("settled");
@@ -231,28 +222,14 @@ export function HeroSection() {
           el.style.opacity = `${item.finalOpacity}`;
           el.classList.add("settled");
         }
-
-        // Morph: text fades out, logo fades in
-        if (textEl) {
-          const textOpacity = Math.max(0, 1 - morph * 2.5);
-          textEl.style.opacity = `${textOpacity}`;
-          textEl.style.transform = `translate(-50%, -50%) scale(${1 - morph * 0.3})`;
-          textEl.style.pointerEvents = morph > 0.5 ? "none" : "auto";
-        }
-        if (logoEl) {
-          const logoOpacity = Math.max(0, morph * 2 - 0.8);
-          logoEl.style.opacity = `${logoOpacity}`;
-          logoEl.style.transform = `translate(-50%, -50%) scale(${0.5 + morph * 0.5})`;
-          logoEl.style.pointerEvents = morph > 0.5 ? "auto" : "none";
-        }
       });
 
-      /* ── Phase 5: Ambient glow ── */
+      /* Phase 4: Ambient glow */
       if (glowRef.current) {
         glowRef.current.style.opacity = `${clamp(p * 2.5, 0, 0.15)}`;
       }
 
-      /* ── Phase 6: Hero content staggered fade-in (55% → 85%) ── */
+      /* Phase 5: Hero content staggered fade-in (55% → 85%) */
       const refs = [
         { ref: eyebrowRef, start: 0.55 },
         { ref: h1Ref, start: 0.60 },
@@ -268,7 +245,7 @@ export function HeroSection() {
         if (ref === ctaRef) ref.current.style.pointerEvents = rp > 0.5 ? "auto" : "none";
       });
 
-      /* ── Phase 7: Bottom fade ── */
+      /* Phase 6: Bottom fade */
       if (bottomFadeRef.current) {
         const fh = p >= 0.85 ? 200 + ((p - 0.85) / 0.15) * 200 : 200;
         bottomFadeRef.current.style.height = `${fh}px`;
@@ -281,7 +258,7 @@ export function HeroSection() {
     return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, []);
 
-  /* ─────────────────── RENDER ─────────────────── */
+  /* ═══════════════════ RENDER ═══════════════════ */
   return (
     <div ref={wrapperRef} className="relative h-[200vh] md:h-[300vh] bg-hero-bg">
       <div
@@ -314,7 +291,7 @@ export function HeroSection() {
           <circle ref={sw2Ref} cx="50%" cy="50%" r="0" fill="none" stroke="hsl(119,99%,46%)" strokeWidth="1" style={{ opacity: 0 }} />
         </svg>
 
-        {/* ── Explosion items ── */}
+        {/* ── Explosion items — LOGOS ONLY with brand colors ── */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ zIndex: 2 }}>
           {EXPLOSION_ITEMS.map((item, idx) => (
             <div
@@ -330,36 +307,45 @@ export function HeroSection() {
               } as React.CSSProperties}
             >
               <div
-                className="explosion-item-inner pointer-events-auto relative w-0 h-0 flex items-center justify-center"
+                className="explosion-item-inner pointer-events-auto relative flex items-center justify-center"
                 style={{
                   "--drift-y": item.driftY,
                   "--drift-dur": item.driftDuration,
+                  width: item.ring === "inner" ? "52px" : item.ring === "mid" ? "46px" : "40px",
+                  height: item.ring === "inner" ? "52px" : item.ring === "mid" ? "46px" : "40px",
                 } as React.CSSProperties}
               >
-                {/* Text pill */}
+                {/* Glassmorphism logo card */}
                 <div
-                  className="item-text absolute bg-secondary/60 border border-border backdrop-blur-sm rounded-lg px-3.5 py-2 text-xs font-medium tracking-wide text-muted-foreground whitespace-nowrap select-none hover:border-primary/40 hover:text-foreground transition-colors duration-200"
-                  style={{ opacity: 1, transform: "translate(-50%,-50%)" }}
-                >
-                  {item.label}
-                </div>
-                {/* Logo card */}
-                <div
-                  className="item-logo absolute w-12 h-12 bg-white/[0.06] border border-white/[0.12] backdrop-blur-xl rounded-xl flex items-center justify-center shadow-[0_0_24px_rgba(255,255,255,0.06)] hover:bg-white/[0.12] transition-all duration-300"
-                  style={{ opacity: 0, transform: "translate(-50%,-50%) scale(0.5)" }}
+                  className="logo-card w-full h-full rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  style={{
+                    background: `rgba(${parseInt(item.color.slice(0,2),16)}, ${parseInt(item.color.slice(2,4),16)}, ${parseInt(item.color.slice(4,6),16)}, 0.08)`,
+                    border: `1px solid rgba(${parseInt(item.color.slice(0,2),16)}, ${parseInt(item.color.slice(2,4),16)}, ${parseInt(item.color.slice(4,6),16)}, 0.2)`,
+                    backdropFilter: "blur(12px)",
+                    boxShadow: `0 0 20px rgba(${parseInt(item.color.slice(0,2),16)}, ${parseInt(item.color.slice(2,4),16)}, ${parseInt(item.color.slice(4,6),16)}, 0.12), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                  }}
                 >
                   <img
-                    src={`https://cdn.simpleicons.org/${item.slug}/ffffff`}
+                    src={`https://cdn.simpleicons.org/${item.slug}/${item.color}`}
                     alt={item.label}
-                    className="w-6 h-6 object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]"
+                    className="object-contain"
+                    style={{
+                      width: item.ring === "inner" ? "26px" : item.ring === "mid" ? "22px" : "18px",
+                      height: item.ring === "inner" ? "26px" : item.ring === "mid" ? "22px" : "18px",
+                      filter: `drop-shadow(0 0 8px rgba(${parseInt(item.color.slice(0,2),16)}, ${parseInt(item.color.slice(2,4),16)}, ${parseInt(item.color.slice(4,6),16)}, 0.5))`,
+                    }}
                     loading="lazy"
                   />
+                </div>
+                {/* Tooltip on hover */}
+                <div className="logo-tooltip absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-medium text-white/60 whitespace-nowrap opacity-0 transition-opacity duration-200 pointer-events-none">
+                  {item.label}
                 </div>
               </div>
             </div>
           ))}
 
-          {/* ── Glassmorphism "BUILD" Text ── */}
+          {/* ══ 3D Glassmorphism "BUILD" Text ══ */}
           <div
             ref={buildContainerRef}
             className="absolute top-1/2 left-1/2 flex items-center justify-center pointer-events-none select-none"
@@ -369,29 +355,15 @@ export function HeroSection() {
               willChange: "transform, opacity, filter",
             }}
           >
-            <div className="flex items-center gap-[0.5vw] md:gap-[1vw]">
+            <div className="build-word flex items-center" style={{ perspective: "1000px" }}>
               {BUILD_LETTERS.map((letter, i) => (
                 <span
-                  key={letter}
-                  className={cn(
-                    "build-letter inline-block relative",
-                    buildVisible && "build-letter--visible",
-                  )}
-                  style={{
-                    "--letter-index": i,
-                    "--letter-delay": `${0.15 + i * 0.12}s`,
-                  } as React.CSSProperties}
+                  key={letter + i}
+                  className={cn("build-letter", buildVisible && "build-letter--in")}
+                  style={{ "--i": i } as React.CSSProperties}
+                  data-letter={letter}
                 >
-                  {/* Glass face */}
-                  <span className="build-letter-face" aria-hidden="true">
-                    {letter}
-                  </span>
-                  {/* Reflection / shine layer */}
-                  <span className="build-letter-shine" aria-hidden="true">
-                    {letter}
-                  </span>
-                  {/* Screen-reader text */}
-                  <span className="sr-only">{letter}</span>
+                  {letter}
                 </span>
               ))}
             </div>
@@ -427,7 +399,6 @@ export function HeroSection() {
           >
             Digital Product Studio
           </div>
-
           <h1
             ref={h1Ref}
             className="text-[clamp(3rem,8vw,6.5rem)] font-bold leading-[1.0] tracking-[-0.05em] uppercase text-white mt-2 max-w-4xl"
@@ -435,7 +406,6 @@ export function HeroSection() {
           >
             We build <br /> what startups <span className="text-primary">ship.</span>
           </h1>
-
           <p
             ref={subRef}
             className="text-muted-foreground text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-xl"
@@ -443,27 +413,19 @@ export function HeroSection() {
           >
             Websites. Prototypes. UI/UX.
           </p>
-
           <div
             ref={ctaRef}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6 w-full sm:w-auto font-bold pointer-events-none"
             style={{ opacity: 0 }}
           >
-            <a
-              href="#contact"
-              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_25px_rgba(119,253,118,0.3)] text-center w-full sm:w-auto shrink-0 pointer-events-auto"
-            >
+            <a href="#contact" className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_25px_rgba(119,253,118,0.3)] text-center w-full sm:w-auto shrink-0 pointer-events-auto">
               Start a Project
             </a>
-            <a
-              href="#work"
-              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-white/[0.05] border border-white/10 text-white hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer text-center w-full sm:w-auto flex items-center justify-center gap-2 shrink-0 backdrop-blur-sm pointer-events-auto"
-            >
+            <a href="#work" className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-white/[0.05] border border-white/10 text-white hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer text-center w-full sm:w-auto flex items-center justify-center gap-2 shrink-0 backdrop-blur-sm pointer-events-auto">
               <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
               See Our Work
             </a>
           </div>
-
           <p
             ref={trustRef}
             className="text-muted-foreground/60 text-xs font-light tracking-wide mt-4"
@@ -485,16 +447,12 @@ export function HeroSection() {
         />
       </div>
 
-      {/* ── Scoped styles ── */}
+      {/* ═══════════════════ STYLES ═══════════════════ */}
       <style>{`
-        /* ─── Parallax CSS vars ─── */
-        .explosion-item {
-          --pf: 0;
-          --px: 0px;
-          --py: 0px;
-        }
+        /* ── Parallax vars ── */
+        .explosion-item { --pf:0; --px:0px; --py:0px; }
 
-        /* ─── Float when settled ─── */
+        /* ── Float when settled ── */
         .explosion-item.settled .explosion-item-inner {
           animation: drift var(--drift-dur, 4s) ease-in-out infinite;
         }
@@ -503,132 +461,163 @@ export function HeroSection() {
           50% { transform: translateY(var(--drift-y, -5px)); }
         }
 
-        /* ══════════════════════════════════════════
-           GLASSMORPHISM BUILD LETTERS
-           ══════════════════════════════════════════ */
+        /* ── Logo tooltip on hover ── */
+        .explosion-item-inner:hover .logo-tooltip { opacity: 1; }
+        .explosion-item-inner:hover .logo-card { transform: scale(1.12); }
+
+        /* ══════════════════════════════════════════════
+           3D GLASSMORPHISM BUILD LETTERS
+           Thick extruded glass text that slides from left
+           ══════════════════════════════════════════════ */
 
         .build-letter {
-          font-size: clamp(4.5rem, 14vw, 12rem);
+          display: inline-block;
+          position: relative;
+          font-size: clamp(5rem, 15vw, 14rem);
           font-weight: 900;
-          line-height: 1;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          position: relative;
-          display: inline-block;
+          line-height: 0.85;
+          letter-spacing: 0.06em;
+          color: transparent;
+          -webkit-text-stroke: 2px rgba(255, 255, 255, 0.25);
+          transform-style: preserve-3d;
 
-          /* Start state: invisible, pushed down + scaled */
+          /* ── Start off-screen left ── */
           opacity: 0;
-          transform: translateY(60px) scale(0.7) rotateX(40deg);
-          filter: blur(8px);
+          transform: translateX(calc(-100vw + var(--i) * -80px)) rotateY(-35deg) rotateX(8deg);
           transition:
-            opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-            transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
-            filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-          transition-delay: var(--letter-delay, 0s);
+            opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+            transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+          transition-delay: calc(0.1s + var(--i) * 0.13s);
         }
 
-        .build-letter--visible {
+        .build-letter--in {
           opacity: 1;
-          transform: translateY(0) scale(1) rotateX(0deg);
-          filter: blur(0);
+          transform: translateX(0) rotateY(0deg) rotateX(0deg);
         }
 
-        /* The main glass face */
-        .build-letter-face {
-          position: relative;
-          display: inline-block;
-
-          /* Glassmorphism: translucent fill + frosted border */
-          background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.15) 0%,
-            rgba(255, 255, 255, 0.04) 50%,
-            rgba(255, 255, 255, 0.10) 100%
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-
-          /* Outer glow + text shadow for depth */
-          filter:
-            drop-shadow(0 0 40px rgba(119, 253, 118, 0.12))
-            drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5));
-        }
-
-        /* Shine / reflection sweep */
-        .build-letter-shine {
+        /* ── FRONT FACE: Glass gradient fill ── */
+        .build-letter::before {
+          content: attr(data-letter);
           position: absolute;
-          top: 0;
-          left: 0;
-          display: inline-block;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: inherit;
+          font-weight: inherit;
+          letter-spacing: inherit;
+          line-height: inherit;
 
           background: linear-gradient(
-            105deg,
-            transparent 20%,
-            rgba(255, 255, 255, 0.35) 45%,
-            rgba(255, 255, 255, 0.55) 50%,
-            rgba(255, 255, 255, 0.35) 55%,
-            transparent 80%
+            180deg,
+            rgba(255, 255, 255, 0.35) 0%,
+            rgba(255, 255, 255, 0.08) 40%,
+            rgba(255, 255, 255, 0.02) 60%,
+            rgba(255, 255, 255, 0.15) 100%
           );
-          background-size: 250% 100%;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
 
-          animation: glassShine 4s ease-in-out infinite;
-          animation-delay: calc(var(--letter-delay, 0s) + 1.2s);
-          opacity: 0.7;
+          filter: drop-shadow(0 0 60px rgba(119, 253, 118, 0.10));
+          z-index: 2;
+        }
+
+        /* ── 3D DEPTH: Stacked extrusion shadows ── */
+        .build-letter::after {
+          content: attr(data-letter);
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: inherit;
+          font-weight: inherit;
+          letter-spacing: inherit;
+          line-height: inherit;
+          -webkit-text-fill-color: transparent;
+          -webkit-text-stroke: 0;
+          z-index: 1;
+
+          /* 3D extrusion: stacked text-shadows create thick depth */
+          text-shadow:
+            /* Depth layers (dark, going "behind") */
+            1px 1px 0 rgba(255,255,255,0.04),
+            2px 2px 0 rgba(255,255,255,0.04),
+            3px 3px 0 rgba(255,255,255,0.035),
+            4px 4px 0 rgba(255,255,255,0.03),
+            5px 5px 0 rgba(255,255,255,0.025),
+            6px 6px 0 rgba(255,255,255,0.02),
+            7px 7px 0 rgba(255,255,255,0.018),
+            8px 8px 0 rgba(255,255,255,0.015),
+            9px 9px 0 rgba(200,200,200,0.012),
+            10px 10px 0 rgba(180,180,180,0.010),
+            11px 11px 0 rgba(160,160,160,0.008),
+            12px 12px 0 rgba(140,140,140,0.006),
+            /* Bottom ambient shadow */
+            4px 8px 20px rgba(0,0,0,0.5),
+            8px 16px 40px rgba(0,0,0,0.3),
+            /* Green underglow */
+            0 6px 30px rgba(119, 253, 118, 0.06);
+          color: rgba(255,255,255,0.04);
+        }
+
+        /* ── SHINE SWEEP across glass ── */
+        .build-letter--in::before {
+          animation: glassShine 5s ease-in-out 2s infinite;
         }
 
         @keyframes glassShine {
           0%, 100% {
-            background-position: 200% center;
+            background: linear-gradient(
+              180deg,
+              rgba(255,255,255,0.35) 0%,
+              rgba(255,255,255,0.08) 40%,
+              rgba(255,255,255,0.02) 60%,
+              rgba(255,255,255,0.15) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
           }
           50% {
-            background-position: -50% center;
+            background: linear-gradient(
+              180deg,
+              rgba(255,255,255,0.50) 0%,
+              rgba(255,255,255,0.15) 35%,
+              rgba(255,255,255,0.08) 55%,
+              rgba(255,255,255,0.30) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
           }
         }
 
-        /* Subtle glow ring behind each letter */
-        .build-letter::before {
+        /* ── Top highlight edge (glass reflection) ── */
+        .build-word::after {
           content: '';
           position: absolute;
-          inset: -10%;
-          border-radius: 24px;
-          background: radial-gradient(
-            ellipse at center,
-            rgba(119, 253, 118, 0.06) 0%,
-            transparent 70%
+          top: 8%;
+          left: 5%;
+          right: 5%;
+          height: 35%;
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.06) 0%,
+            transparent 100%
           );
+          border-radius: 40% 40% 60% 60%;
           pointer-events: none;
           opacity: 0;
-          transition: opacity 1.2s ease;
-          transition-delay: calc(var(--letter-delay, 0s) + 0.5s);
+          transition: opacity 1.5s ease 1.2s;
         }
 
-        .build-letter--visible::before {
+        .build-word:has(.build-letter--in)::after {
           opacity: 1;
         }
 
-        /* ─── Stroke outline for extra glass edge ─── */
-        .build-letter::after {
-          content: attr(data-letter);
-          position: absolute;
-          top: 0;
-          left: 0;
-          display: inline-block;
-          font-size: inherit;
-          font-weight: inherit;
-          letter-spacing: inherit;
-          -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
-          -webkit-text-fill-color: transparent;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 1s ease;
-          transition-delay: calc(var(--letter-delay, 0s) + 0.3s);
-        }
-        .build-letter--visible::after {
-          opacity: 1;
+        .build-word {
+          position: relative;
+          transform-style: preserve-3d;
         }
       `}</style>
     </div>
