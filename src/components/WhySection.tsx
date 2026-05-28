@@ -194,7 +194,7 @@ export function WhySection() {
                   <div
                     key={item.title}
                     className={cn("flex items-start gap-5 group opacity-0", sectionInView && "animate-fade-up")}
-                    style={{ animationDelay: \`\${0.4 + i * 0.1}s\` }}
+                    style={{ animationDelay: `${0.4 + i * 0.1}s` }}
                   >
                     {/* Styled Icon */}
                     <div className="w-12 h-12 rounded-xl bg-white/3 border border-white/5 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all duration-300">
