@@ -355,11 +355,14 @@ export function HeroSection() {
           <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none", opacity: 0, overflow: "hidden" }}>
             <defs>
               <filter id="glass-3d" x="-20%" y="-20%" width="140%" height="140%">
-                {/* 1. Drop shadow */}
-                <feDropShadow dx="2" dy="12" stdDeviation="8" floodColor="rgba(0,0,0,0.5)" in="SourceAlpha" result="dropShadow" />
+                {/* 1. Drop shadow (Manual nodes to prevent original opaque SourceAlpha from being merged) */}
+                <feOffset dx="2" dy="12" in="SourceAlpha" result="shadowOffset" />
+                <feGaussianBlur stdDeviation="8" in="shadowOffset" result="shadowBlur" />
+                <feFlood floodColor="rgba(0,0,0,0.5)" result="shadowColor" />
+                <feComposite operator="in" in="shadowColor" in2="shadowBlur" result="dropShadow" />
                 
                 {/* 2. Transparent fill */}
-                <feFlood floodColor="rgba(255,255,255,0.08)" result="fillTint" />
+                <feFlood floodColor="rgba(255,255,255,0.15)" result="fillTint" />
                 <feComposite operator="in" in="fillTint" in2="SourceAlpha" result="glassFill" />
 
                 {/* 3. Thick blur for Bevel height map */}
@@ -518,6 +521,22 @@ export function HeroSection() {
           >
             Serving startups in India &amp; USA · 40+ projects delivered · Design to deployment
           </p>
+        </div>
+
+        {/* ── Scroll Indicator ── */}
+        <div 
+          className={cn(
+            "absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-auto cursor-pointer z-30 transition-opacity duration-1000",
+            buildVisible ? "opacity-100" : "opacity-0"
+          )}
+          onClick={() => {
+            window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+          }}
+        >
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold animate-pulse">Scroll</span>
+          <div className="w-5 h-8 border-2 border-muted-foreground/30 rounded-full flex justify-center p-1">
+            <div className="w-1 h-2 bg-primary rounded-full animate-[bounce_1.5s_infinite]" />
+          </div>
         </div>
 
         {/* ── Bottom fade ── */}
