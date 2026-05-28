@@ -108,7 +108,13 @@ function buildItemsConfig(): ExplosionItem[] {
 }
 
 const EXPLOSION_ITEMS = buildItemsConfig();
-const BUILD_LETTERS = ["B", "U", "I", "L", "D"];
+const BUILD_LETTERS = [
+  { char: "B", x: 80 },
+  { char: "U", x: 210 },
+  { char: "I", x: 310 },
+  { char: "L", x: 390 },
+  { char: "D", x: 510 },
+];
 
 /* ═══════════════════════ COMPONENT ═══════════════════════ */
 export function HeroSection() {
@@ -345,59 +351,69 @@ export function HeroSection() {
             </div>
           ))}
 
-          {/* ══ Active SVG Container to hold the 3D Bubble Filters (not hidden via display:none) ══ */}
+          {/* ══ Active SVG Container to hold the 3D Glass Filters ══ */}
           <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none", opacity: 0, overflow: "hidden" }}>
             <defs>
-              {/* Glass Body Filter (Back Layer) */}
-              <filter id="glass-body" x="-30%" y="-30%" width="160%" height="160%">
-                <feDropShadow dx="0" dy="12" stdDeviation="10" floodColor="rgba(0,0,0,0.55)" in="SourceAlpha" result="shadow" />
-                <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="rgba(119,253,118,0.2)" in="SourceAlpha" result="greenGlow" />
-                <feFlood floodColor="rgba(255, 255, 255, 0.015)" result="glassTint" />
-                <feComposite operator="in" in="glassTint" in2="SourceAlpha" result="glassFill" />
-                <feOffset dx="0" dy="3" in="SourceAlpha" result="offset" />
-                <feGaussianBlur stdDeviation="5" in="offset" result="blur" />
-                <feComposite operator="out" in="SourceAlpha" in2="blur" result="innerShadow" />
-                <feFlood floodColor="#000000" floodOpacity="0.4" result="blackColor" />
-                <feComposite operator="in" in="blackColor" in2="innerShadow" result="innerShadowFinal" />
-                <feMerge>
-                  <feMergeNode in="shadow" />
-                  <feMergeNode in="greenGlow" />
-                  <feMergeNode in="glassFill" />
-                  <feMergeNode in="innerShadowFinal" />
-                </feMerge>
-              </filter>
+              <filter id="glass-3d" x="-20%" y="-20%" width="140%" height="140%">
+                {/* 1. Drop shadow */}
+                <feDropShadow dx="2" dy="12" stdDeviation="8" floodColor="rgba(0,0,0,0.5)" in="SourceAlpha" result="dropShadow" />
+                
+                {/* 2. Transparent fill */}
+                <feFlood floodColor="rgba(255,255,255,0.08)" result="fillTint" />
+                <feComposite operator="in" in="fillTint" in2="SourceAlpha" result="glassFill" />
 
-              {/* Glass Tube Filter (Front Layer) */}
-              <filter id="glass-tube" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3.5" result="blur1" />
-                <feSpecularLighting in="blur1" surfaceScale="9" specularConstant="2.8" specularExponent="35" lightingColor="#ffffff" result="specular">
-                  <feDistantLight azimuth="220" elevation="55" />
+                {/* 3. Thick blur for Bevel height map */}
+                <feGaussianBlur stdDeviation="6" in="SourceAlpha" result="bevelBlur" />
+
+                {/* 4. Top-Left Bevel Highlight */}
+                <feOffset dx="-4" dy="-4" in="bevelBlur" result="bevelHighlightOffset" />
+                <feComposite operator="out" in="bevelHighlightOffset" in2="bevelBlur" result="bevelHighlightDiff" />
+                <feComposite operator="in" in="bevelHighlightDiff" in2="SourceAlpha" result="bevelHighlightMask" />
+                <feFlood floodColor="#ffffff" floodOpacity="0.8" result="whiteGlow" />
+                <feComposite operator="in" in="whiteGlow" in2="bevelHighlightMask" result="bevelHighlight" />
+
+                {/* 5. Bottom-Right Bevel Shadow */}
+                <feOffset dx="4" dy="4" in="bevelBlur" result="bevelShadowOffset" />
+                <feComposite operator="out" in="bevelShadowOffset" in2="bevelBlur" result="bevelShadowDiff" />
+                <feComposite operator="in" in="bevelShadowDiff" in2="SourceAlpha" result="bevelShadowMask" />
+                <feFlood floodColor="#000000" floodOpacity="0.6" result="blackGlow" />
+                <feComposite operator="in" in="blackGlow" in2="bevelShadowMask" result="bevelShadow" />
+
+                {/* 6. Sharp Specular Highlight (The glossy plastic reflection) */}
+                <feGaussianBlur stdDeviation="3" in="SourceAlpha" result="specularBlur" />
+                <feSpecularLighting in="specularBlur" surfaceScale="8" specularConstant="2.5" specularExponent="45" lightingColor="#ffffff" result="specular">
+                  <feDistantLight azimuth="225" elevation="55" />
                 </feSpecularLighting>
                 <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularMasked" />
-                <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="blur2" />
-                <feComposite operator="out" in="SourceAlpha" in2="blur2" result="edgeMask" />
-                <feFlood floodColor="#ffffff" floodOpacity="0.8" result="whiteColor" />
-                <feComposite operator="in" in="whiteColor" in2="edgeMask" result="rimHighlight" />
-                <feFlood floodColor="#00ffff" floodOpacity="0.3" result="cyanColor" />
-                <feComposite operator="in" in="cyanColor" in2="edgeMask" result="cyanEdge" />
-                <feOffset in="cyanEdge" dx="1.5" dy="1.5" result="cyanOffset" />
-                <feFlood floodColor="#ff00ff" floodOpacity="0.3" result="pinkColor" />
-                <feComposite operator="in" in="pinkColor" in2="edgeMask" result="pinkEdge" />
-                <feOffset in="pinkEdge" dx="-1.5" dy="-1.5" result="pinkOffset" />
-                <feFlood floodColor="rgba(255, 255, 255, 0.05)" result="tubeFillTint" />
-                <feComposite operator="in" in="tubeFillTint" in2="SourceAlpha" result="tubeFill" />
+                
+                {/* 7. Thin inner bright edge to simulate refraction line */}
+                <feOffset dx="0" dy="0" in="SourceAlpha" result="innerEdgeOffset" />
+                <feGaussianBlur stdDeviation="1.5" in="innerEdgeOffset" result="innerEdgeBlur" />
+                <feComposite operator="out" in="SourceAlpha" in2="innerEdgeBlur" result="innerEdgeMask" />
+                <feFlood floodColor="#ffffff" floodOpacity="0.6" result="innerEdgeColor" />
+                <feComposite operator="in" in="innerEdgeColor" in2="innerEdgeMask" result="innerEdge" />
+
+                {/* 8. Thin outer dark edge for contrast */}
+                <feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated" />
+                <feComposite operator="out" in="dilated" in2="SourceAlpha" result="outerEdgeMask" />
+                <feFlood floodColor="rgba(0,0,0,0.3)" result="outerEdgeColor" />
+                <feComposite operator="in" in="outerEdgeColor" in2="outerEdgeMask" result="outerEdge" />
+
+                {/* Merge everything together */}
                 <feMerge>
-                  <feMergeNode in="tubeFill" />
-                  <feMergeNode in="pinkOffset" />
-                  <feMergeNode in="cyanOffset" />
-                  <feMergeNode in="rimHighlight" />
+                  <feMergeNode in="dropShadow" />
+                  <feMergeNode in="outerEdge" />
+                  <feMergeNode in="glassFill" />
+                  <feMergeNode in="bevelShadow" />
+                  <feMergeNode in="bevelHighlight" />
+                  <feMergeNode in="innerEdge" />
                   <feMergeNode in="specularMasked" />
                 </feMerge>
               </filter>
             </defs>
           </svg>
 
-          {/* ══ Liquid Balloon Glass 3D "BUILD" Text ══ */}
+          {/* ══ Solid Bevel Glass 3D "BUILD" Text ══ */}
           <div
             ref={buildContainerRef}
             className="absolute top-1/2 left-1/2 flex items-center justify-center pointer-events-none select-none"
@@ -407,45 +423,34 @@ export function HeroSection() {
               willChange: "transform, opacity, filter",
             }}
           >
-            <div className="build-word flex items-center justify-center gap-1 sm:gap-2 md:gap-4" style={{ perspective: "1200px" }}>
-              {BUILD_LETTERS.map((letter, i) => (
-                <svg
-                  key={letter + i}
-                  viewBox="0 0 180 220"
-                  className={cn(
-                    "build-letter-svg w-[15vw] max-w-[140px] h-auto overflow-visible",
-                    buildVisible && "build-letter-svg--in"
-                  )}
-                  style={{
-                    "--i": i,
-                    display: "inline-block",
-                    willChange: "transform, opacity",
-                  } as React.CSSProperties}
-                >
-                  {/* Layer 1: Solid glass body & shadow */}
-                  <text
-                    x="50%"
-                    y="58%"
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    className="build-letter-body"
-                    filter="url(#glass-body)"
+            <div className="build-word flex items-center justify-center" style={{ perspective: "1200px" }}>
+              <svg 
+                viewBox="0 0 600 220" 
+                className="w-[85vw] max-w-[650px] h-auto overflow-visible"
+              >
+                {BUILD_LETTERS.map((item, i) => (
+                  <g
+                    key={item.char + i}
+                    className={cn("build-letter-group", buildVisible && "build-letter-group--in")}
+                    style={{ 
+                      "--i": i,
+                      transformBox: "fill-box",
+                      transformOrigin: "center",
+                    } as React.CSSProperties}
                   >
-                    {letter}
-                  </text>
-                  {/* Layer 2: Glossy bubble tubes outline */}
-                  <text
-                    x="50%"
-                    y="58%"
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    className="build-letter-tube"
-                    filter="url(#glass-tube)"
-                  >
-                    {letter}
-                  </text>
-                </svg>
-              ))}
+                    <text
+                      x={item.x}
+                      y="110"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      className="build-letter-solid"
+                      filter="url(#glass-3d)"
+                    >
+                      {item.char}
+                    </text>
+                  </g>
+                ))}
+              </svg>
             </div>
           </div>
         </div>
@@ -549,7 +554,7 @@ export function HeroSection() {
            TRUE 3D BUBBLE GLASS TEXT via SVG FILTER
            ══════════════════════════════════════════════ */
 
-        .build-letter-svg {
+        .build-letter-group {
           display: inline-block;
           will-change: transform, opacity;
           
@@ -560,30 +565,20 @@ export function HeroSection() {
           transition-delay: calc(0.1s + var(--i) * 0.12s);
         }
 
-        .build-letter-svg--in {
+        .build-letter-group--in {
           opacity: 1;
           transform: scale(1) translateY(0) rotate(0deg);
         }
 
-        .build-letter-body {
+        .build-letter-solid {
           font-family: 'Titan One', system-ui, sans-serif;
           font-size: 175px;
           font-weight: 900;
           fill: #ffffff;
         }
 
-        .build-letter-tube {
-          font-family: 'Titan One', system-ui, sans-serif;
-          font-size: 175px;
-          font-weight: 900;
-          fill: none;
-          stroke: #ffffff;
-          stroke-width: 14px;
-          stroke-linejoin: round;
-        }
-
         /* Subtle balloon bobbing animation */
-        .build-word:has(.build-letter-svg--in) {
+        .build-word:has(.build-letter-group--in) {
           animation: balloonBob 6s ease-in-out 1s infinite;
         }
         
