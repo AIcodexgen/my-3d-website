@@ -435,7 +435,7 @@ export function HeroSection() {
                     </UIElement>
                     <div className="flex flex-col gap-2 mt-4">
                       {[...Array(3)].map((_, i) => (
-                        <UIElement key={i} show={revealedElements.includes(6)} className="h-5 bg-secondary/20 rounded w-full shrink-0" style={{ transitionDelay: \`\${i * 0.1}s\` }} />
+                        <UIElement key={i} show={revealedElements.includes(6)} className="h-5 bg-secondary/20 rounded w-full shrink-0" style={{ transitionDelay: `${i * 0.1}s` }} />
                       ))}
                     </div>
                   </div>
