@@ -33,6 +33,7 @@ const stars = [
 
 interface ExplosionItem {
   label: string;
+  slug: string;
   ring: "inner" | "mid" | "outer";
   txVal: number;
   tyVal: number;
@@ -46,46 +47,46 @@ interface ExplosionItem {
 
 const buildItemsConfig = (): ExplosionItem[] => {
   const INNER_ITEMS = [
-    "UI/UX Design",
-    "Web Development",
-    "App Prototypes",
-    "Figma",
-    "React",
-    "Next.js",
-    "Framer",
-    "Tailwind CSS",
+    { label: "UI/UX Design", slug: "figma" },
+    { label: "Web Development", slug: "react" },
+    { label: "App Prototypes", slug: "nextdotjs" },
+    { label: "Figma", slug: "figma" },
+    { label: "React", slug: "react" },
+    { label: "Next.js", slug: "nextdotjs" },
+    { label: "Framer", slug: "framer" },
+    { label: "Tailwind CSS", slug: "tailwindcss" },
   ];
 
   const MID_ITEMS = [
-    { label: "TypeScript", hideOnMobile: false },
-    { label: "Supabase", hideOnMobile: false },
-    { label: "Node.js", hideOnMobile: false },
-    { label: "Webflow", hideOnMobile: false },
-    { label: "Spline", hideOnMobile: false },
-    { label: "Shopify", hideOnMobile: true },
-    { label: "Storybook", hideOnMobile: true },
-    { label: "Lottie", hideOnMobile: true },
-    { label: "REST APIs", hideOnMobile: true },
-    { label: "Vercel", hideOnMobile: false },
-    { label: "Firebase", hideOnMobile: false },
-    { label: "Prisma", hideOnMobile: false },
+    { label: "TypeScript", slug: "typescript", hideOnMobile: false },
+    { label: "Supabase", slug: "supabase", hideOnMobile: false },
+    { label: "Node.js", slug: "nodedotjs", hideOnMobile: false },
+    { label: "Webflow", slug: "webflow", hideOnMobile: false },
+    { label: "Spline", slug: "spline", hideOnMobile: false },
+    { label: "Shopify", slug: "shopify", hideOnMobile: true },
+    { label: "Storybook", slug: "storybook", hideOnMobile: true },
+    { label: "Lottie", slug: "lottiefiles", hideOnMobile: true },
+    { label: "REST APIs", slug: "postman", hideOnMobile: true },
+    { label: "Vercel", slug: "vercel", hideOnMobile: false },
+    { label: "Firebase", slug: "firebase", hideOnMobile: false },
+    { label: "Prisma", slug: "prisma", hideOnMobile: false },
   ];
 
   const OUTER_ITEMS = [
-    "Fast Delivery",
-    "Clean Handoff",
-    "Mobile First",
-    "SEO Ready",
-    "Startup Focused",
-    "Design Systems",
-    "India & USA",
-    "Zero Lock-in",
+    { label: "Fast Delivery", slug: "vercel" },
+    { label: "Clean Handoff", slug: "github" },
+    { label: "Mobile First", slug: "apple" },
+    { label: "SEO Ready", slug: "google" },
+    { label: "Startup Focused", slug: "stripe" },
+    { label: "Design Systems", slug: "figma" },
+    { label: "India & USA", slug: "cloudflare" },
+    { label: "Zero Lock-in", slug: "docker" },
   ];
 
   const config: ExplosionItem[] = [];
 
   // Inner ring
-  INNER_ITEMS.forEach((label, idx) => {
+  INNER_ITEMS.forEach((item, idx) => {
     const angleDeg = idx * 45;
     const angleRad = (angleDeg * Math.PI) / 180;
     const rVw = 18;
@@ -96,7 +97,8 @@ const buildItemsConfig = (): ExplosionItem[] => {
     const tyMobileVal = Number((rVh * 0.6 * Math.sin(angleRad)).toFixed(2));
 
     config.push({
-      label,
+      label: item.label,
+      slug: item.slug,
       ring: "inner",
       txVal,
       tyVal,
@@ -121,6 +123,7 @@ const buildItemsConfig = (): ExplosionItem[] => {
 
     config.push({
       label: item.label,
+      slug: item.slug,
       ring: "mid",
       txVal,
       tyVal,
@@ -134,7 +137,7 @@ const buildItemsConfig = (): ExplosionItem[] => {
   });
 
   // Outer ring
-  OUTER_ITEMS.forEach((label, idx) => {
+  OUTER_ITEMS.forEach((item, idx) => {
     const angleDeg = 11.25 + idx * 45;
     const angleRad = (angleDeg * Math.PI) / 180;
     const rVw = 44;
@@ -145,7 +148,8 @@ const buildItemsConfig = (): ExplosionItem[] => {
     const tyMobileVal = Number((rVh * 0.6 * Math.sin(angleRad)).toFixed(2));
 
     config.push({
-      label,
+      label: item.label,
+      slug: item.slug,
       ring: "outer",
       txVal,
       tyVal,
@@ -165,7 +169,6 @@ const EXPLOSION_ITEMS = buildItemsConfig();
 export function HeroSection() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const eyebrowRef = useRef<HTMLDivElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
@@ -234,72 +237,23 @@ export function HeroSection() {
 
       const isMobile = window.innerWidth < 768;
 
-      // 1. "BUILD" word crack/shatter
-      if (isMobile) {
-        if (wordContainerRef.current) {
-          const wordOpacity = 1 - clamp((scrollProgress - 0.2) / 0.3, 0, 1);
-          wordContainerRef.current.style.opacity = wordOpacity.toString();
-          wordContainerRef.current.style.transform = `translate(-50%, -50%) scale(${1 + (1 - wordOpacity) * 0.15})`;
-          wordContainerRef.current.style.filter = "none";
-          wordContainerRef.current.style.textShadow = `0 0 ${wordOpacity * 30}px rgba(119, 253, 118, 0.4)`;
-        }
-      } else {
-        // Crack distortion (0.0% -> 20.0%)
-        const turb = document.getElementById("crack-turb");
-        const disp = document.getElementById("crack-disp");
-        if (turb && disp) {
-          if (scrollProgress > 0.05 && scrollProgress <= 0.2) {
-            const crackP = (scrollProgress - 0.05) / 0.15;
-            turb.setAttribute("baseFrequency", (crackP * 0.04).toString());
-            disp.setAttribute("scale", (crackP * 15).toString());
-          } else if (scrollProgress <= 0.05) {
-            turb.setAttribute("baseFrequency", "0");
-            disp.setAttribute("scale", "0");
-          }
-        }
+      // 1. "BUILD" text sink animation (0.0% -> 25.0%)
+      if (wordContainerRef.current) {
+        const sinkProgress = clamp(scrollProgress / 0.25, 0, 1);
+        const scale = 1 - (0.4 * sinkProgress); // Scales down from 1 to 0.6
+        const opacity = 1 - Math.pow(sinkProgress, 2); // Fades out completely
 
-        if (wordContainerRef.current) {
-          if (scrollProgress <= 0.20) {
-            const glowP = scrollProgress / 0.2;
-            wordContainerRef.current.style.textShadow = `0 0 ${glowP * 60}px rgba(119, 253, 118, 0.8)`;
-            wordContainerRef.current.style.opacity = "1";
-            wordContainerRef.current.style.filter = scrollProgress > 0.05 ? "url(#crack-filter)" : "none";
-          } else {
-            wordContainerRef.current.style.opacity = "0";
-          }
-        }
-
-        // Shatter fragments translation (20.0% -> 60.0%)
-        const shatterP = clamp((scrollProgress - 0.2) / 0.4, 0, 1);
-        const trajectories = {
-          B: { tx: -60, ty: -40, tz: -200, rx: -45, ry: 30, scale: 0.1 },
-          U: { tx: -20, ty: -80, tz: -300, rx: 60, ry: -20, scale: 0.05 },
-          I: { tx: 0,   ty: 60,  tz: -150, rx: 30, ry: 45,  scale: 0.08 },
-          L: { tx: 40,  ty: -30, tz: -250, rx: -30, ry: -60, scale: 0.06 },
-          D: { tx: 70,  ty: 50,  tz: -200, rx: 45, ry: 20,  scale: 0.1  },
-        };
-
-        letterRefs.current.forEach((span) => {
-          if (!span) return;
-          const letter = span.getAttribute("data-letter") as keyof typeof trajectories;
-          if (!letter || !trajectories[letter]) return;
-
-          const t = trajectories[letter];
-          const p = shatterP;
-          const txVal = t.tx * p;
-          const tyVal = t.ty * p;
-          const tzVal = t.tz * p;
-          const rxVal = t.rx * p;
-          const ryVal = t.ry * p;
-          const scaleVal = 1 - (1 - t.scale) * p;
-          const opacityVal = 1 - p;
-
-          span.style.transform = `translate3d(${txVal}vw, ${tyVal}vh, ${tzVal}px) rotateX(${rxVal}deg) rotateY(${ryVal}deg) scale(${scaleVal})`;
-          span.style.opacity = opacityVal.toString();
-        });
+        wordContainerRef.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        wordContainerRef.current.style.opacity = opacity.toString();
+        // Slightly blur it out as it sinks for depth
+        wordContainerRef.current.style.filter = `blur(${sinkProgress * 10}px)`;
       }
 
-      // 2. Shockwave Rings (18.0% -> 35.0%)
+      // 2. Morph scattered text into logos (15.0% -> 35.0%)
+      const morphProgress = clamp((scrollProgress - 0.15) / 0.20, 0, 1);
+      wrapper.style.setProperty("--morph-progress", morphProgress.toString());
+
+      // 3. Shockwave Rings (18.0% -> 35.0%)
       const swP1 = clamp((scrollProgress - 0.18) / 0.17, 0, 1);
       if (shockwave1Ref.current) {
         shockwave1Ref.current.setAttribute("r", `${swP1 * 55}vw`);
@@ -312,7 +266,7 @@ export function HeroSection() {
         shockwave2Ref.current.style.opacity = (1 - swP2).toString();
       }
 
-      // 3. Logo Explosion (20.0% -> 75.0%)
+      // 4. Logo Explosion Trajectories (0.0% -> 75.0%)
       EXPLOSION_ITEMS.forEach((item, idx) => {
         const element = itemRefs.current[idx];
         if (!element) return;
@@ -327,9 +281,10 @@ export function HeroSection() {
         }
 
         if (scrollProgress <= 0.75) {
-          const start = 0.2 + idx * 0.007;
+          const start = 0.05 + idx * 0.007; // Staggered start slightly after scroll begins
           const duration = 0.75 - start;
           const itemProgress = clamp((scrollProgress - start) / duration, 0, 1);
+          // Strong exponential ease-out for a snappy fly-out
           const eased = itemProgress === 1 ? 1 : 1 - Math.pow(2, -10 * itemProgress);
           
           const tx = isMobile ? item.txMobileVal : item.txVal;
@@ -348,13 +303,13 @@ export function HeroSection() {
         }
       });
 
-      // 4. Radial Ambient Glow Opacity (0.0% -> 75.0%)
+      // 5. Radial Ambient Glow Opacity (0.0% -> 75.0%)
       if (glowRef.current) {
         const glowOpacity = clamp(scrollProgress * 3, 0, 0.12);
         glowRef.current.style.opacity = glowOpacity.toString();
       }
 
-      // 5. Hero Content Fades & Offsets (60.0% -> 85.0%)
+      // 6. Hero Content Fades & Offsets (60.0% -> 85.0%)
       const eyebrowP = clamp((scrollProgress - 0.60) / 0.2, 0, 1);
       const h1P = clamp((scrollProgress - 0.65) / 0.2, 0, 1);
       const subP = clamp((scrollProgress - 0.70) / 0.2, 0, 1);
@@ -390,7 +345,7 @@ export function HeroSection() {
         trustRef.current.style.transform = `translateY(${(1 - eased) * 24}px)`;
       }
 
-      // 6. Transition Bottom Fade Height (85.0% -> 100.0%)
+      // 7. Transition Bottom Fade Height (85.0% -> 100.0%)
       if (bottomFadeRef.current) {
         const fadeHeight = scrollProgress >= 0.85
           ? 200 + ((scrollProgress - 0.85) / 0.15) * 200
@@ -413,34 +368,11 @@ export function HeroSection() {
 
   return (
     <div ref={wrapperRef} className="relative h-[200vh] md:h-[300vh] bg-hero-bg">
-      {/* Invisible SVG displacement filter for crack distortion */}
-      <svg className="hidden">
-        <defs>
-          <filter id="crack-filter">
-            <feTurbulence
-              id="crack-turb"
-              type="fractalNoise"
-              baseFrequency="0"
-              numOctaves="4"
-              result="noise"
-            />
-            <feDisplacementMap
-              id="crack-disp"
-              in="SourceGraphic"
-              in2="noise"
-              scale="0"
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Sticky viewport window */}
       <div
         id="hero-sticky"
         className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center select-none"
-        style={{ perspective: "1200px" } as React.CSSProperties}
+        style={{ perspective: "1200px", "--morph-progress": "0" } as React.CSSProperties}
       >
         {/* ── Twinkling Space Starfield Background ── */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -512,70 +444,51 @@ export function HeroSection() {
               } as React.CSSProperties}
             >
               <div
-                className="explosion-item-inner pointer-events-auto"
+                className="explosion-item-inner pointer-events-auto relative w-0 h-0 flex items-center justify-center"
                 style={{
                   "--drift-y": item.driftY,
                   "--drift-duration": item.driftDuration,
                   willChange: "transform",
                 } as React.CSSProperties}
               >
-                <div className="bg-secondary/60 border border-border backdrop-blur-sm rounded-lg px-3.5 py-2 text-xs font-medium tracking-wide text-muted-foreground whitespace-nowrap select-none hover:border-primary/40 hover:text-foreground transition-colors duration-200">
+                {/* Text Label State */}
+                <div className="item-text absolute bg-secondary/60 border border-border backdrop-blur-sm rounded-lg px-3.5 py-2 text-xs font-medium tracking-wide text-muted-foreground whitespace-nowrap select-none hover:border-primary/40 hover:text-foreground transition-colors duration-200">
                   {item.label}
+                </div>
+                {/* Logo Morph State */}
+                <div className="item-logo absolute w-12 h-12 bg-white/5 border border-white/10 backdrop-blur-xl rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-colors duration-200">
+                  <img 
+                    src={`https://cdn.simpleicons.org/${item.slug}/ffffff`} 
+                    alt={item.label}
+                    className="w-6 h-6 object-contain opacity-90 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                    loading="lazy"
+                  />
                 </div>
               </div>
             </div>
           ))}
 
-          {/* Centered word B-U-I-L-D detonator */}
+          {/* Centered Glass SVG "BUILD" Text */}
           <div
             ref={wordContainerRef}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center font-bold tracking-[-0.06em] uppercase text-white/90 select-none pointer-events-none text-[clamp(5rem,18vw,8rem)] md:text-[clamp(8rem,20vw,18rem)] transition-shadow duration-75"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center select-none pointer-events-none w-[90vw] md:w-[60vw]"
+            style={{ willChange: "transform, opacity, filter" }}
           >
-            <span
-              ref={(el) => {
-                letterRefs.current[0] = el;
-              }}
-              data-letter="B"
-              className="inline-block transition-transform duration-75"
+            <svg 
+              viewBox="0 0 800 250" 
+              className="w-full h-auto overflow-visible drop-shadow-[0_4px_24px_rgba(119,253,118,0.15)]"
             >
-              B
-            </span>
-            <span
-              ref={(el) => {
-                letterRefs.current[1] = el;
-              }}
-              data-letter="U"
-              className="inline-block transition-transform duration-75"
-            >
-              U
-            </span>
-            <span
-              ref={(el) => {
-                letterRefs.current[2] = el;
-              }}
-              data-letter="I"
-              className="inline-block transition-transform duration-75"
-            >
-              I
-            </span>
-            <span
-              ref={(el) => {
-                letterRefs.current[3] = el;
-              }}
-              data-letter="L"
-              className="inline-block transition-transform duration-75"
-            >
-              L
-            </span>
-            <span
-              ref={(el) => {
-                letterRefs.current[4] = el;
-              }}
-              data-letter="D"
-              className="inline-block transition-transform duration-75"
-            >
-              D
-            </span>
+              <text
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                dominantBaseline="central"
+                className="build-glass-text font-black"
+                style={{ fontSize: "180px", letterSpacing: "0.02em", fontFamily: "inherit" }}
+              >
+                BUILD
+              </text>
+            </svg>
           </div>
         </div>
 
@@ -635,13 +548,13 @@ export function HeroSection() {
           >
             <a
               href="#contact"
-              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_25px_rgba(119,253,118,0.3)] text-center w-full sm:w-auto shrink-0"
+              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_25px_rgba(119,253,118,0.3)] text-center w-full sm:w-auto shrink-0 pointer-events-auto"
             >
               Start a Project
             </a>
             <a
               href="#work"
-              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-white/[0.05] border border-white/10 text-white hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer text-center w-full sm:w-auto flex items-center justify-center gap-2 shrink-0 backdrop-blur-sm"
+              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-widest bg-white/[0.05] border border-white/10 text-white hover:bg-white/10 active:scale-[0.98] transition-all cursor-pointer text-center w-full sm:w-auto flex items-center justify-center gap-2 shrink-0 backdrop-blur-sm pointer-events-auto"
             >
               <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
@@ -672,6 +585,7 @@ export function HeroSection() {
       </div>
 
       <style>{`
+        /* Dynamic Parallax Setup */
         .explosion-item {
           --tx: var(--tx-mobile);
           --ty: var(--ty-mobile);
@@ -686,6 +600,7 @@ export function HeroSection() {
           }
         }
 
+        /* Float Animation when settled */
         .explosion-item.settled .explosion-item-inner {
           animation: drift var(--drift-duration) ease-in-out infinite;
           animation-delay: 0s;
@@ -699,8 +614,45 @@ export function HeroSection() {
             transform: translateY(var(--drift-y));
           }
         }
+
+        /* Glassmorphism Text Animation */
+        .build-glass-text {
+          fill: rgba(255, 255, 255, 0);
+          stroke: rgba(255, 255, 255, 0.9);
+          stroke-width: 2.5px;
+          stroke-dasharray: 800;
+          stroke-dashoffset: 800;
+          animation: drawBuild 2.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes drawBuild {
+          0% {
+            stroke-dashoffset: 800;
+            fill: rgba(255, 255, 255, 0);
+          }
+          40% {
+            stroke-dashoffset: 0;
+            fill: rgba(255, 255, 255, 0);
+          }
+          100% {
+            stroke-dashoffset: 0;
+            fill: rgba(255, 255, 255, 0.12); /* Glassy translucent fill */
+          }
+        }
+
+        /* Morphing Logic via CSS Variable */
+        .item-text {
+          opacity: calc(1 - var(--morph-progress, 0) * 2); /* Fade out faster */
+          transform: translate(-50%, -50%) scale(calc(1 - var(--morph-progress, 0)));
+          will-change: transform, opacity;
+        }
+        
+        .item-logo {
+          opacity: calc(var(--morph-progress, 0) * 2 - 1); /* Fade in later */
+          transform: translate(-50%, -50%) scale(var(--morph-progress, 0));
+          will-change: transform, opacity;
+        }
       `}</style>
     </div>
   );
 }
-
