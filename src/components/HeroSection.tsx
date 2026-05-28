@@ -384,9 +384,13 @@ export function HeroSection() {
 
                 {/* 6. Sharp Specular Highlight (The glossy plastic reflection) */}
                 <feGaussianBlur stdDeviation="3" in="SourceAlpha" result="specularBlur" />
-                <feSpecularLighting in="specularBlur" surfaceScale="8" specularConstant="2.5" specularExponent="45" lightingColor="#ffffff" result="specular">
+                <feSpecularLighting in="specularBlur" surfaceScale="8" specularConstant="2.5" specularExponent="45" lightingColor="#ffffff" result="specularRaw">
                   <feDistantLight azimuth="225" elevation="55" />
                 </feSpecularLighting>
+                <feComponentTransfer in="specularRaw" result="specular">
+                  {/* Threshold the specular lighting to remove the base grey on flat surfaces */}
+                  <feFuncA type="linear" slope="4" intercept="-1" />
+                </feComponentTransfer>
                 <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularMasked" />
                 
                 {/* 7. Thin inner bright edge to simulate refraction line */}
