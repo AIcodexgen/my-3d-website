@@ -345,42 +345,48 @@ export function HeroSection() {
             </div>
           ))}
 
-          {/* ══ Invisible SVG to hold the 3D Bubble Filter ══ */}
-          <svg width="0" height="0" className="hidden">
+          {/* ══ Active SVG Container to hold the 3D Bubble Filter (not hidden via display:none) ══ */}
+          <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none", opacity: 0, overflow: "hidden" }}>
             <defs>
               <filter id="bubble-3d" x="-30%" y="-30%" width="160%" height="160%">
                 {/* 1. Height map for 3D bulge */}
-                <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur1" />
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur1" />
                 
                 {/* 2. Realistic 3D Specular Lighting (The Glossy Bulge) */}
-                <feSpecularLighting in="blur1" surfaceScale="14" specularConstant="2.5" specularExponent="45" lightingColor="#ffffff" result="specular">
-                  <fePointLight x="100" y="-100" z="200" />
+                <feSpecularLighting in="blur1" surfaceScale="12" specularConstant="2.4" specularExponent="38" lightingColor="#ffffff" result="specular">
+                  <feDistantLight azimuth="220" elevation="55" />
                 </feSpecularLighting>
                 <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularMasked" />
 
-                {/* 3. Inner Edge Highlight (simulates glass thickness) */}
-                <feOffset in="SourceAlpha" dx="0" dy="0" result="offset" />
-                <feGaussianBlur in="offset" stdDeviation="5" result="blur2" />
+                {/* 3. Inner Shadow for 3D depth and contrast */}
+                <feOffset dx="0" dy="3" in="SourceAlpha" result="offsetAlpha" />
+                <feGaussianBlur stdDeviation="4" in="offsetAlpha" result="offsetBlur" />
+                <feComposite operator="out" in="SourceAlpha" in2="offsetBlur" result="innerShadow" />
+                <feFlood floodColor="#000000" floodOpacity="0.5" result="blackColor" />
+                <feComposite operator="in" in="blackColor" in2="innerShadow" result="innerShadowFinal" />
+
+                {/* 4. Inner Edge Highlight (simulates glass thickness) */}
+                <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur2" />
                 <feComposite operator="out" in="SourceAlpha" in2="blur2" result="innerShadowMask" />
-                <feFlood floodColor="#ffffff" floodOpacity="1" result="whiteGlow" />
+                <feFlood floodColor="#ffffff" floodOpacity="0.85" result="whiteGlow" />
                 <feComposite operator="in" in="whiteGlow" in2="innerShadowMask" result="edgeHighlight" />
 
-                {/* 4. Subtle Iridescent Soap Bubble Tint (Cyan & Pink refraction) */}
-                <feFlood floodColor="#00ffff" floodOpacity="0.4" result="cyanGlow" />
+                {/* 5. Iridescent soap bubble tint (Chromatic refraction) */}
+                <feFlood floodColor="#00ffff" floodOpacity="0.25" result="cyanGlow" />
                 <feComposite operator="in" in="cyanGlow" in2="innerShadowMask" result="cyanEdge" />
-                <feOffset in="cyanEdge" dx="5" dy="5" result="cyanOffset" />
+                <feOffset in="cyanEdge" dx="3" dy="3" result="cyanOffset" />
 
-                <feFlood floodColor="#ff00ff" floodOpacity="0.4" result="pinkGlow" />
+                <feFlood floodColor="#ff00ff" floodOpacity="0.25" result="pinkGlow" />
                 <feComposite operator="in" in="pinkGlow" in2="innerShadowMask" result="pinkEdge" />
-                <feOffset in="pinkEdge" dx="-5" dy="-5" result="pinkOffset" />
+                <feOffset in="pinkEdge" dx="-3" dy="-3" result="pinkOffset" />
 
-                {/* 5. Extremely faint transparent glass body */}
-                <feFlood floodColor="rgba(255,255,255,0.02)" result="baseGlass" />
+                {/* 6. Transparent glass base body */}
+                <feFlood floodColor="#77fd76" floodOpacity="0.05" result="baseGlass" />
                 <feComposite operator="in" in="baseGlass" in2="SourceAlpha" result="glassFill" />
 
-                {/* 6. Environmental Drop Shadow & Green ambient glow */}
-                <feDropShadow dx="0" dy="15" stdDeviation="15" floodColor="rgba(0,0,0,0.5)" in="SourceAlpha" result="dropShadow" />
-                <feDropShadow dx="0" dy="5" stdDeviation="8" floodColor="rgba(119,253,118,0.4)" in="SourceAlpha" result="greenGlow" />
+                {/* 7. Drop Shadow & Green ambient glow */}
+                <feDropShadow dx="0" dy="12" stdDeviation="12" floodColor="rgba(0,0,0,0.6)" in="SourceAlpha" result="dropShadow" />
+                <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="rgba(119,253,118,0.25)" in="SourceAlpha" result="greenGlow" />
 
                 {/* Merge all layers back together! */}
                 <feMerge>
@@ -389,6 +395,7 @@ export function HeroSection() {
                   <feMergeNode in="glassFill" />
                   <feMergeNode in="pinkOffset" />
                   <feMergeNode in="cyanOffset" />
+                  <feMergeNode in="innerShadowFinal" />
                   <feMergeNode in="edgeHighlight" />
                   <feMergeNode in="specularMasked" />
                 </feMerge>
@@ -406,15 +413,32 @@ export function HeroSection() {
               willChange: "transform, opacity, filter",
             }}
           >
-            <div className="build-word flex items-center" style={{ perspective: "1200px" }}>
+            <div className="build-word flex items-center justify-center gap-1 sm:gap-2 md:gap-4" style={{ perspective: "1200px" }}>
               {BUILD_LETTERS.map((letter, i) => (
-                <span
+                <svg
                   key={letter + i}
-                  className={cn("build-letter", buildVisible && "build-letter--in")}
-                  style={{ "--i": i } as React.CSSProperties}
+                  viewBox="0 0 180 220"
+                  className={cn(
+                    "build-letter-svg w-[15vw] max-w-[140px] h-auto overflow-visible",
+                    buildVisible && "build-letter-svg--in"
+                  )}
+                  style={{
+                    "--i": i,
+                    display: "inline-block",
+                    willChange: "transform, opacity",
+                  } as React.CSSProperties}
                 >
-                  {letter}
-                </span>
+                  <text
+                    x="50%"
+                    y="58%"
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="build-letter-text"
+                    filter="url(#bubble-3d)"
+                  >
+                    {letter}
+                  </text>
+                </svg>
               ))}
             </div>
           </div>
@@ -519,19 +543,9 @@ export function HeroSection() {
            TRUE 3D BUBBLE GLASS TEXT via SVG FILTER
            ══════════════════════════════════════════════ */
 
-        .build-letter {
+        .build-letter-svg {
           display: inline-block;
-          position: relative;
-          font-family: 'Titan One', system-ui, sans-serif;
-          font-size: clamp(6rem, 16vw, 15rem);
-          line-height: 1.1;
-          letter-spacing: 0.03em;
-          
-          /* The color must be solid so SourceAlpha provides a solid mask for the SVG filter */
-          color: black; 
-          
-          /* Apply the incredible 3D bubble SVG filter */
-          filter: url(#bubble-3d);
+          will-change: transform, opacity;
           
           /* Entrance Animation (Pop in like balloons) */
           opacity: 0;
@@ -540,13 +554,20 @@ export function HeroSection() {
           transition-delay: calc(0.1s + var(--i) * 0.12s);
         }
 
-        .build-letter--in {
+        .build-letter-svg--in {
           opacity: 1;
           transform: scale(1) translateY(0) rotate(0deg);
         }
 
+        .build-letter-text {
+          font-family: 'Titan One', system-ui, sans-serif;
+          font-size: 175px;
+          font-weight: 900;
+          fill: #ffffff;
+        }
+
         /* Subtle balloon bobbing animation */
-        .build-word:has(.build-letter--in) {
+        .build-word:has(.build-letter-svg--in) {
           animation: balloonBob 6s ease-in-out 1s infinite;
         }
         
