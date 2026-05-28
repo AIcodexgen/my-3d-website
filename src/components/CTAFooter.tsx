@@ -211,7 +211,7 @@ const updatePhysics = (
 function PhysicsStackDOM() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [objects, setObjects] = useState<PhysicsObject[]>([]);
-  const { ref: viewRef, inView } = useInView({ threshold: 0.05 });
+  const { ref: viewRef, inView } = useInView({ threshold: 0.3 });
   const requestRef = useRef<number>(0);
   const prevInViewRef = useRef<boolean>(false);
 
