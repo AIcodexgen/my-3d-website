@@ -108,6 +108,7 @@ function buildItemsConfig(): ExplosionItem[] {
 }
 
 const EXPLOSION_ITEMS = buildItemsConfig();
+const BUILD_LETTERS = ["B", "U", "I", "L", "D"];
 
 /* ═══════════════════════ COMPONENT ═══════════════════════ */
 export function HeroSection() {
@@ -344,7 +345,7 @@ export function HeroSection() {
             </div>
           ))}
 
-          {/* ══ Bubble 3D "BUILD" Text with Cursive Writing ══ */}
+          {/* ══ Liquid Balloon Glass 3D "BUILD" Text ══ */}
           <div
             ref={buildContainerRef}
             className="absolute top-1/2 left-1/2 flex items-center justify-center pointer-events-none select-none"
@@ -354,101 +355,17 @@ export function HeroSection() {
               willChange: "transform, opacity, filter",
             }}
           >
-            <div className={cn("build-svg-wrapper", buildVisible && "build-svg-wrapper--animate")}>
-              <svg
-                viewBox="0 0 820 200"
-                className="build-svg"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <defs>
-                  {/* Bubble gradient fill */}
-                  <linearGradient id="bubbleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0.40)" />
-                    <stop offset="30%" stopColor="rgba(255,255,255,0.12)" />
-                    <stop offset="60%" stopColor="rgba(255,255,255,0.04)" />
-                    <stop offset="100%" stopColor="rgba(255,255,255,0.18)" />
-                  </linearGradient>
-                  {/* Top highlight for bubble reflection */}
-                  <linearGradient id="bubbleHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0.65)" />
-                    <stop offset="40%" stopColor="rgba(255,255,255,0.10)" />
-                    <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                  </linearGradient>
-                  {/* Shine sweep gradient */}
-                  <linearGradient id="shineSweep" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                    <stop offset="40%" stopColor="rgba(255,255,255,0)" />
-                    <stop offset="48%" stopColor="rgba(255,255,255,0.5)" />
-                    <stop offset="52%" stopColor="rgba(255,255,255,0.5)" />
-                    <stop offset="60%" stopColor="rgba(255,255,255,0)" />
-                    <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                  </linearGradient>
-                  {/* Glow filter for depth */}
-                  <filter id="bubbleGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                  {/* Drop shadow for 3D depth */}
-                  <filter id="depth3d" x="-10%" y="-10%" width="130%" height="150%">
-                    <feDropShadow dx="3" dy="6" stdDeviation="4" floodColor="rgba(0,0,0,0.5)" />
-                    <feDropShadow dx="6" dy="12" stdDeviation="10" floodColor="rgba(0,0,0,0.3)" />
-                    <feDropShadow dx="0" dy="4" stdDeviation="20" floodColor="rgba(119,253,118,0.08)" />
-                  </filter>
-                </defs>
-
-                {/* 3D Depth shadow layer (offset behind) */}
-                <text
-                  x="410" y="130"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="build-text-shadow"
+            <div className="build-word flex items-center" style={{ perspective: "1200px" }}>
+              {BUILD_LETTERS.map((letter, i) => (
+                <span
+                  key={letter + i}
+                  className={cn("build-letter", buildVisible && "build-letter--in")}
+                  style={{ "--i": i } as React.CSSProperties}
+                  data-letter={letter}
                 >
-                  BUILD
-                </text>
-
-                {/* Main bubble fill layer */}
-                <text
-                  x="410" y="125"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="build-text-fill"
-                >
-                  BUILD
-                </text>
-
-                {/* Cursive stroke drawing layer (on top) */}
-                <text
-                  x="410" y="125"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="build-text-stroke"
-                >
-                  BUILD
-                </text>
-
-                {/* Top highlight reflection (bubble shine) */}
-                <text
-                  x="410" y="118"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="build-text-highlight"
-                >
-                  BUILD
-                </text>
-
-                {/* Animated shine sweep */}
-                <text
-                  x="410" y="125"
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="build-text-shine"
-                >
-                  BUILD
-                </text>
-              </svg>
+                  {letter}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -549,147 +466,127 @@ export function HeroSection() {
         .explosion-item-inner:hover .logo-card { transform: scale(1.12); }
 
         /* ══════════════════════════════════════════════
-           BUBBLE 3D BUILD TEXT — Cursive Writing Anim
+           LIQUID BALLOON GLASS TEXT
            ══════════════════════════════════════════════ */
 
-        .build-svg-wrapper {
-          width: clamp(320px, 75vw, 900px);
+        .build-letter {
+          display: inline-block;
           position: relative;
+          font-family: 'Titan One', system-ui, sans-serif;
+          font-size: clamp(6rem, 16vw, 15rem);
+          line-height: 1.1;
+          letter-spacing: 0.03em;
+          color: transparent;
           transform-style: preserve-3d;
-        }
-
-        .build-svg {
-          width: 100%;
-          height: auto;
-          overflow: visible;
-        }
-
-        /* Shared text styling for all layers */
-        .build-text-shadow,
-        .build-text-fill,
-        .build-text-stroke,
-        .build-text-highlight,
-        .build-text-shine {
-          font-family: inherit;
-          font-size: 160px;
-          font-weight: 900;
-          letter-spacing: 0.08em;
-        }
-
-        /* ── Layer 1: 3D Depth Shadow (behind everything) ── */
-        .build-text-shadow {
-          fill: rgba(0, 0, 0, 0.25);
-          stroke: none;
-          filter: blur(6px);
+          
+          /* Entrance Animation (Pop in like balloons) */
           opacity: 0;
-        }
-        .build-svg-wrapper--animate .build-text-shadow {
-          animation: bubbleFadeIn 1.5s ease 1.8s forwards;
-        }
-
-        /* ── Layer 2: Bubble translucent fill ── */
-        .build-text-fill {
-          fill: url(#bubbleGrad);
-          stroke: none;
-          filter: url(#depth3d);
-          opacity: 0;
-        }
-        .build-svg-wrapper--animate .build-text-fill {
-          animation: bubbleFadeIn 1.2s ease 1.6s forwards;
+          transform: scale(0.4) translateY(60px) rotate(-10deg);
+          transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transition-delay: calc(0.1s + var(--i) * 0.12s);
         }
 
-        /* ── Layer 3: Cursive stroke drawing (the writing animation) ── */
-        .build-text-stroke {
-          fill: none;
-          stroke: rgba(255, 255, 255, 0.7);
-          stroke-width: 2.5;
-          stroke-linecap: round;
-          stroke-linejoin: round;
-          stroke-dasharray: 2200;
-          stroke-dashoffset: 2200;
-          filter: url(#bubbleGlow);
-        }
-        .build-svg-wrapper--animate .build-text-stroke {
-          animation: cursiveWrite 2.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards,
-                     strokeFadeAfterFill 0.8s ease 3.2s forwards;
+        .build-letter--in {
+          opacity: 1;
+          transform: scale(1) translateY(0) rotate(0deg);
         }
 
-        /* ── Layer 4: Top bubble highlight reflection ── */
-        .build-text-highlight {
-          fill: url(#bubbleHighlight);
-          stroke: none;
-          opacity: 0;
-          clip-path: inset(0 0 55% 0);
-        }
-        .build-svg-wrapper--animate .build-text-highlight {
-          animation: bubbleFadeIn 1s ease 2.2s forwards;
+        /* ── FRONT FACE: Glass gradient fill + Balloon Stroke ── */
+        .build-letter::before {
+          content: attr(data-letter);
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          /* Super glossy glass gradient */
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(255, 255, 255, 0.40) 25%,
+            rgba(255, 255, 255, 0.05) 50%,
+            rgba(255, 255, 255, 0.60) 80%,
+            rgba(255, 255, 255, 0.90) 100%
+          );
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          
+          /* Inner highlight simulating a bevel */
+          filter: drop-shadow(0 -4px 6px rgba(255, 255, 255, 0.4))
+                  drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+
+          /* Thick stroke for the balloon edge */
+          -webkit-text-stroke: 4px rgba(255, 255, 255, 0.5);
+          z-index: 2;
         }
 
-        /* ── Layer 5: Sweeping shine ── */
-        .build-text-shine {
-          fill: url(#shineSweep);
-          stroke: none;
-          opacity: 0;
-        }
-        .build-svg-wrapper--animate .build-text-shine {
-          animation: bubbleFadeIn 0.5s ease 2.8s forwards,
-                     shineSweepMove 4s ease-in-out 3.5s infinite;
+        /* ── BACKGROUND: Thick Liquid 3D Extrusion ── */
+        .build-letter::after {
+          content: attr(data-letter);
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          -webkit-text-fill-color: transparent;
+          -webkit-text-stroke: 0;
+          z-index: 1;
+
+          /* Deep liquid 3D shadow stack */
+          text-shadow:
+            0px 1px 0 rgba(255, 255, 255, 0.3),
+            0px 2px 0 rgba(255, 255, 255, 0.2),
+            0px 3px 0 rgba(255, 255, 255, 0.15),
+            0px 4px 0 rgba(255, 255, 255, 0.1),
+            0px 5px 0 rgba(255, 255, 255, 0.08),
+            0px 6px 0 rgba(255, 255, 255, 0.05),
+            0px 8px 10px rgba(0, 0, 0, 0.6),
+            0px 15px 25px rgba(0, 0, 0, 0.4),
+            0px 30px 60px rgba(119, 253, 118, 0.25);
         }
 
-        /* ── KEYFRAMES ── */
+        /* ── SHINE SWEEP across glass ── */
+        .build-letter--in::before {
+          animation: glassShine 4s ease-in-out 1.5s infinite;
+        }
 
-        /* Cursive writing: one continuous stroke from left to right */
-        @keyframes cursiveWrite {
-          0% {
-            stroke-dashoffset: 2200;
+        @keyframes glassShine {
+          0%, 100% {
+            background: linear-gradient(
+              180deg,
+              rgba(255, 255, 255, 0.95) 0%,
+              rgba(255, 255, 255, 0.40) 25%,
+              rgba(255, 255, 255, 0.05) 50%,
+              rgba(255, 255, 255, 0.60) 80%,
+              rgba(255, 255, 255, 0.90) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
           }
-          100% {
-            stroke-dashoffset: 0;
-          }
-        }
-
-        /* Fade the stroke out after the fill appears */
-        @keyframes strokeFadeAfterFill {
-          0% {
-            stroke: rgba(255, 255, 255, 0.7);
-            stroke-width: 2.5;
-          }
-          100% {
-            stroke: rgba(255, 255, 255, 0.15);
-            stroke-width: 1.5;
-          }
-        }
-
-        /* Generic fade-in for fill layers */
-        @keyframes bubbleFadeIn {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-
-        /* Shine sweeps left to right */
-        @keyframes shineSweepMove {
-          0% {
-            clip-path: inset(0 100% 0 0);
-          }
-          40% {
-            clip-path: inset(0 0 0 0);
-          }
-          60% {
-            clip-path: inset(0 0 0 0);
-          }
-          100% {
-            clip-path: inset(0 0 0 100%);
+          50% {
+            background: linear-gradient(
+              180deg,
+              rgba(255, 255, 255, 0.95) 0%,
+              rgba(255, 255, 255, 0.80) 35%,
+              rgba(255, 255, 255, 0.20) 60%,
+              rgba(255, 255, 255, 0.80) 85%,
+              rgba(255, 255, 255, 0.90) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
           }
         }
 
-        /* Subtle bubble float idle animation */
-        .build-svg-wrapper--animate .build-svg {
-          animation: bubbleFloat 6s ease-in-out 3s infinite;
+        /* Subtle balloon bobbing animation */
+        .build-word:has(.build-letter--in) {
+          animation: balloonBob 6s ease-in-out 1s infinite;
         }
-
-        @keyframes bubbleFloat {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-6px) scale(1.008); }
+        
+        @keyframes balloonBob {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-8px) scale(1.01); }
         }
       `}</style>
     </div>
