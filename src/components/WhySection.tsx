@@ -128,25 +128,22 @@ export function WhySection() {
       >
         <div
           ref={sectionRef}
-          className={cn(
-            "grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 opacity-0 transition-opacity duration-500",
-            sectionInView && "opacity-100"
-          )}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12"
         >
           {/* ── Left Column: Sticky Brand Headline & Quote ── */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-12 lg:sticky lg:top-28 lg:h-[calc(100vh-200px)]">
             <div>
-              <p className="text-primary text-[10px] uppercase tracking-[0.3em] mb-4">
+              <p className={cn("text-primary text-[10px] uppercase tracking-[0.3em] mb-4 opacity-0", sectionInView && "animate-fade-up")}>
                 WHY US
               </p>
-              <h2 className="text-[clamp(2.25rem,5vw,3.8rem)] font-bold tracking-tight leading-[1.0] max-w-xl text-foreground">
+              <h2 className={cn("text-[clamp(2.25rem,5vw,3.8rem)] font-bold tracking-tight leading-[1.0] max-w-xl text-foreground opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.1s" }}>
                 Built for founders,
                 <br />
                 not enterprises.
               </h2>
             </div>
 
-            <div className="relative pl-6 border-l-2 border-primary/30 py-2">
+            <div className={cn("relative pl-6 border-l-2 border-primary/30 py-2 opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.2s" }}>
               <blockquote className="text-xl md:text-2xl font-bold leading-snug text-foreground/90">
                 "Most agencies sell you a retainer.
                 <span className="text-primary"> We sell you a result.</span>"
@@ -169,7 +166,7 @@ export function WhySection() {
           <div className="lg:col-span-7 flex flex-col gap-20">
             
             {/* Section A: Borderless Stats Strip */}
-            <div>
+            <div className={cn("opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.3s" }}>
               <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground/40 font-bold mb-8">
                 BY THE NUMBERS
               </p>
@@ -188,15 +185,16 @@ export function WhySection() {
             </div>
 
             {/* Section B: Borderless Differentiators Open List */}
-            <div>
+            <div className={cn("opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.4s" }}>
               <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground/40 font-bold mb-8">
                 OUR PROTOCOL
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-12">
-                {differentiators.map((item) => (
+                {differentiators.map((item, i) => (
                   <div
                     key={item.title}
-                    className="flex items-start gap-5 group"
+                    className={cn("flex items-start gap-5 group opacity-0", sectionInView && "animate-fade-up")}
+                    style={{ animationDelay: \`\${0.4 + i * 0.1}s\` }}
                   >
                     {/* Styled Icon */}
                     <div className="w-12 h-12 rounded-xl bg-white/3 border border-white/5 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all duration-300">

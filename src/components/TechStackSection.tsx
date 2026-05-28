@@ -207,36 +207,34 @@ export function TechStackSection() {
 
         <div
           ref={sectionRef}
-          className={cn(
-            "max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center opacity-0 transition-opacity duration-500 z-10 relative",
-            sectionInView && "opacity-100"
-          )}
+          className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center z-10 relative"
         >
           {/* Left Column - Text & Content (approx 40% / 5 grid cols) */}
           <div className="lg:col-span-5 flex flex-col items-start text-left relative z-30">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] uppercase tracking-[0.2em] mb-6">
+            <div className={cn("inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] uppercase tracking-[0.2em] mb-6 opacity-0", sectionInView && "animate-fade-up")}>
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               Our Tech Stack
             </div>
             
-            <h2 className="text-[clamp(2.25rem,4.5vw,3.25rem)] font-extrabold tracking-tight leading-[1.08] text-foreground mb-6">
+            <h2 className={cn("text-[clamp(2.25rem,4.5vw,3.25rem)] font-extrabold tracking-tight leading-[1.08] text-foreground mb-6 opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.1s" }}>
               Key Technologies <br className="hidden sm:inline" /> &amp; Platforms
             </h2>
             
-            <p className="text-muted-foreground/75 text-sm font-light leading-relaxed mb-8 max-w-md">
+            <p className={cn("text-muted-foreground/75 text-sm font-light leading-relaxed mb-8 max-w-md opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.2s" }}>
               We work with leading platforms and technologies that empower digital transformation, accelerate delivery, and drive measurable business results.
             </p>
             
             <a 
               href="#contact" 
-              className="inline-block bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-background hover:border-primary transition-all duration-300 px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest pointer-events-auto cursor-pointer shadow-lg active:scale-95 text-center"
+              className={cn("inline-block bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-background hover:border-primary transition-all duration-300 px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest pointer-events-auto cursor-pointer shadow-lg active:scale-95 text-center opacity-0", sectionInView && "animate-fade-up")}
+              style={{ animationDelay: "0.3s" }}
             >
               Sync Your Stack
             </a>
           </div>
 
           {/* Right Column - Flat Circular Orbit Showcase (approx 60% / 7 grid cols) */}
-          <div className="lg:col-span-7 flex justify-center items-center h-[350px] sm:h-[500px] md:h-[600px] overflow-hidden w-full relative z-20 select-none">
+          <div className={cn("lg:col-span-7 flex justify-center items-center h-[350px] sm:h-[500px] md:h-[600px] overflow-hidden w-full relative z-20 select-none opacity-0", sectionInView && "animate-scale-in")} style={{ animationDelay: "0.4s" }}>
             {/* Responsive scale wrapper */}
             <div className="relative w-[600px] h-[600px] flex items-center justify-center shrink-0 scale-[0.55] sm:scale-[0.8] md:scale-[0.9] lg:scale-100 transition-transform duration-300">
               

@@ -38,7 +38,11 @@
   /* Pre-promote animated elements to GPU compositing layer before animation starts.
      This prevents the "first-frame jank" where the browser scrambles to create layers. */
   .animate-fade-up,
-  .animate-fade-in {
+  .animate-fade-up-lg,
+  .animate-fade-in,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-scale-in {
     will-change: transform, opacity;
   }
 }

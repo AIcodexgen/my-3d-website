@@ -70,7 +70,7 @@ const col2 = [testimonials[1], testimonials[4]];
 const col3 = [testimonials[2], testimonials[5]];
 
 export function TestimonialsSection() {
-  const { ref: sectionRef } = useInView();
+  const { ref: sectionRef, inView: sectionInView } = useInView();
 
   const renderCard = (t: Testimonial, keyStr: string) => {
     return (
@@ -152,10 +152,10 @@ export function TestimonialsSection() {
 
       {/* Header */}
       <div ref={sectionRef} className="max-w-6xl mx-auto mb-16">
-        <p className="text-primary text-[10px] uppercase tracking-[0.3em] mb-4">
+        <p className={cn("text-primary text-[10px] uppercase tracking-[0.3em] mb-4 opacity-0", sectionInView && "animate-fade-up")}>
           WHAT FOUNDERS SAY
         </p>
-        <h2 className="text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold tracking-tight leading-[1.1] text-foreground">
+        <h2 className={cn("text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold tracking-tight leading-[1.1] text-foreground opacity-0", sectionInView && "animate-fade-up")} style={{ animationDelay: "0.1s" }}>
           Endorsed by founders. <br />
           Backed by results.
         </h2>
