@@ -345,58 +345,52 @@ export function HeroSection() {
             </div>
           ))}
 
-          {/* ══ Active SVG Container to hold the 3D Bubble Filter (not hidden via display:none) ══ */}
+          {/* ══ Active SVG Container to hold the 3D Bubble Filters (not hidden via display:none) ══ */}
           <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none", opacity: 0, overflow: "hidden" }}>
             <defs>
-              <filter id="bubble-3d" x="-30%" y="-30%" width="160%" height="160%">
-                {/* 1. Height map for 3D bulge */}
-                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur1" />
-                
-                {/* 2. Realistic 3D Specular Lighting (The Glossy Bulge) */}
-                <feSpecularLighting in="blur1" surfaceScale="12" specularConstant="2.4" specularExponent="38" lightingColor="#ffffff" result="specular">
+              {/* Glass Body Filter (Back Layer) */}
+              <filter id="glass-body" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="12" stdDeviation="10" floodColor="rgba(0,0,0,0.55)" in="SourceAlpha" result="shadow" />
+                <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="rgba(119,253,118,0.2)" in="SourceAlpha" result="greenGlow" />
+                <feFlood floodColor="rgba(255, 255, 255, 0.015)" result="glassTint" />
+                <feComposite operator="in" in="glassTint" in2="SourceAlpha" result="glassFill" />
+                <feOffset dx="0" dy="3" in="SourceAlpha" result="offset" />
+                <feGaussianBlur stdDeviation="5" in="offset" result="blur" />
+                <feComposite operator="out" in="SourceAlpha" in2="blur" result="innerShadow" />
+                <feFlood floodColor="#000000" floodOpacity="0.4" result="blackColor" />
+                <feComposite operator="in" in="blackColor" in2="innerShadow" result="innerShadowFinal" />
+                <feMerge>
+                  <feMergeNode in="shadow" />
+                  <feMergeNode in="greenGlow" />
+                  <feMergeNode in="glassFill" />
+                  <feMergeNode in="innerShadowFinal" />
+                </feMerge>
+              </filter>
+
+              {/* Glass Tube Filter (Front Layer) */}
+              <filter id="glass-tube" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3.5" result="blur1" />
+                <feSpecularLighting in="blur1" surfaceScale="9" specularConstant="2.8" specularExponent="35" lightingColor="#ffffff" result="specular">
                   <feDistantLight azimuth="220" elevation="55" />
                 </feSpecularLighting>
                 <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularMasked" />
-
-                {/* 3. Inner Shadow for 3D depth and contrast */}
-                <feOffset dx="0" dy="3" in="SourceAlpha" result="offsetAlpha" />
-                <feGaussianBlur stdDeviation="4" in="offsetAlpha" result="offsetBlur" />
-                <feComposite operator="out" in="SourceAlpha" in2="offsetBlur" result="innerShadow" />
-                <feFlood floodColor="#000000" floodOpacity="0.5" result="blackColor" />
-                <feComposite operator="in" in="blackColor" in2="innerShadow" result="innerShadowFinal" />
-
-                {/* 4. Inner Edge Highlight (simulates glass thickness) */}
-                <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur2" />
-                <feComposite operator="out" in="SourceAlpha" in2="blur2" result="innerShadowMask" />
-                <feFlood floodColor="#ffffff" floodOpacity="0.85" result="whiteGlow" />
-                <feComposite operator="in" in="whiteGlow" in2="innerShadowMask" result="edgeHighlight" />
-
-                {/* 5. Iridescent soap bubble tint (Chromatic refraction) */}
-                <feFlood floodColor="#00ffff" floodOpacity="0.25" result="cyanGlow" />
-                <feComposite operator="in" in="cyanGlow" in2="innerShadowMask" result="cyanEdge" />
-                <feOffset in="cyanEdge" dx="3" dy="3" result="cyanOffset" />
-
-                <feFlood floodColor="#ff00ff" floodOpacity="0.25" result="pinkGlow" />
-                <feComposite operator="in" in="pinkGlow" in2="innerShadowMask" result="pinkEdge" />
-                <feOffset in="pinkEdge" dx="-3" dy="-3" result="pinkOffset" />
-
-                {/* 6. Transparent glass base body */}
-                <feFlood floodColor="#77fd76" floodOpacity="0.05" result="baseGlass" />
-                <feComposite operator="in" in="baseGlass" in2="SourceAlpha" result="glassFill" />
-
-                {/* 7. Drop Shadow & Green ambient glow */}
-                <feDropShadow dx="0" dy="12" stdDeviation="12" floodColor="rgba(0,0,0,0.6)" in="SourceAlpha" result="dropShadow" />
-                <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="rgba(119,253,118,0.25)" in="SourceAlpha" result="greenGlow" />
-
-                {/* Merge all layers back together! */}
+                <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="blur2" />
+                <feComposite operator="out" in="SourceAlpha" in2="blur2" result="edgeMask" />
+                <feFlood floodColor="#ffffff" floodOpacity="0.8" result="whiteColor" />
+                <feComposite operator="in" in="whiteColor" in2="edgeMask" result="rimHighlight" />
+                <feFlood floodColor="#00ffff" floodOpacity="0.3" result="cyanColor" />
+                <feComposite operator="in" in="cyanColor" in2="edgeMask" result="cyanEdge" />
+                <feOffset in="cyanEdge" dx="1.5" dy="1.5" result="cyanOffset" />
+                <feFlood floodColor="#ff00ff" floodOpacity="0.3" result="pinkColor" />
+                <feComposite operator="in" in="pinkColor" in2="edgeMask" result="pinkEdge" />
+                <feOffset in="pinkEdge" dx="-1.5" dy="-1.5" result="pinkOffset" />
+                <feFlood floodColor="rgba(255, 255, 255, 0.05)" result="tubeFillTint" />
+                <feComposite operator="in" in="tubeFillTint" in2="SourceAlpha" result="tubeFill" />
                 <feMerge>
-                  <feMergeNode in="dropShadow" />
-                  <feMergeNode in="greenGlow" />
-                  <feMergeNode in="glassFill" />
+                  <feMergeNode in="tubeFill" />
                   <feMergeNode in="pinkOffset" />
                   <feMergeNode in="cyanOffset" />
-                  <feMergeNode in="innerShadowFinal" />
-                  <feMergeNode in="edgeHighlight" />
+                  <feMergeNode in="rimHighlight" />
                   <feMergeNode in="specularMasked" />
                 </feMerge>
               </filter>
@@ -428,13 +422,25 @@ export function HeroSection() {
                     willChange: "transform, opacity",
                   } as React.CSSProperties}
                 >
+                  {/* Layer 1: Solid glass body & shadow */}
                   <text
                     x="50%"
                     y="58%"
                     textAnchor="middle"
                     dominantBaseline="central"
-                    className="build-letter-text"
-                    filter="url(#bubble-3d)"
+                    className="build-letter-body"
+                    filter="url(#glass-body)"
+                  >
+                    {letter}
+                  </text>
+                  {/* Layer 2: Glossy bubble tubes outline */}
+                  <text
+                    x="50%"
+                    y="58%"
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="build-letter-tube"
+                    filter="url(#glass-tube)"
                   >
                     {letter}
                   </text>
@@ -559,11 +565,21 @@ export function HeroSection() {
           transform: scale(1) translateY(0) rotate(0deg);
         }
 
-        .build-letter-text {
+        .build-letter-body {
           font-family: 'Titan One', system-ui, sans-serif;
           font-size: 175px;
           font-weight: 900;
           fill: #ffffff;
+        }
+
+        .build-letter-tube {
+          font-family: 'Titan One', system-ui, sans-serif;
+          font-size: 175px;
+          font-weight: 900;
+          fill: none;
+          stroke: #ffffff;
+          stroke-width: 14px;
+          stroke-linejoin: round;
         }
 
         /* Subtle balloon bobbing animation */
