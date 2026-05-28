@@ -234,7 +234,7 @@ export function TechStackSection() {
           </div>
 
           {/* Right Column - Flat Circular Orbit Showcase (approx 60% / 7 grid cols) */}
-          <div className={cn("lg:col-span-7 flex justify-center items-center h-[350px] sm:h-[500px] md:h-[600px] overflow-hidden w-full relative z-20 select-none opacity-0", sectionInView && "animate-scale-in")} style={{ animationDelay: "0.4s" }}>
+          <div className={cn("lg:col-span-7 flex justify-center items-center h-[350px] sm:h-[500px] md:h-[600px] overflow-hidden w-full relative z-20 select-none transition-all duration-1000 ease-out", sectionInView ? "opacity-100 scale-100" : "opacity-0 scale-90")} style={{ transitionDelay: "0.4s" }}>
             {/* Responsive scale wrapper */}
             <div className="relative w-[600px] h-[600px] flex items-center justify-center shrink-0 scale-[0.55] sm:scale-[0.8] md:scale-[0.9] lg:scale-100 transition-transform duration-300">
               
@@ -333,7 +333,7 @@ export function TechStackSection() {
       </section>
 
       {/* Generated CSS keyframe animations for smooth GPU-composited circular orbits */}
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         ${innerKeyframes}
         ${middleKeyframes}
         ${outerKeyframes}
@@ -341,7 +341,7 @@ export function TechStackSection() {
         .group:hover {
           animation-play-state: paused !important;
         }
-      `}</style>
+      `}} />
     </div>
   );
 }
