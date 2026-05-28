@@ -212,7 +212,7 @@ export function HeroSection() {
         el.style.display = "";
 
         if (p <= 0.70) {
-          const start = 0.04 + idx * 0.005;
+          const start = 0.20 + idx * 0.005;
           const dur = 0.70 - start;
           const ip = clamp((p - start) / dur, 0, 1);
           const e = easeOutExpo(ip);
@@ -354,63 +354,66 @@ export function HeroSection() {
           {/* ══ Active SVG Container to hold the 3D Glass Filters ══ */}
           <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none", opacity: 0, overflow: "hidden" }}>
             <defs>
+              {/* Beautiful transparent glass gradient */}
+              <linearGradient id="glass-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+                <stop offset="20%" stopColor="rgba(255,255,255,0.1)" />
+                <stop offset="80%" stopColor="rgba(255,255,255,0.05)" />
+                <stop offset="100%" stopColor="rgba(255,255,255,0.3)" />
+              </linearGradient>
+
               <filter id="glass-3d" x="-20%" y="-20%" width="140%" height="140%">
                 {/* 1. Drop shadow (Manual nodes to prevent original opaque SourceAlpha from being merged) */}
                 <feOffset dx="2" dy="12" in="SourceAlpha" result="shadowOffset" />
                 <feGaussianBlur stdDeviation="8" in="shadowOffset" result="shadowBlur" />
                 <feFlood floodColor="rgba(0,0,0,0.5)" result="shadowColor" />
                 <feComposite operator="in" in="shadowColor" in2="shadowBlur" result="dropShadow" />
-                
-                {/* 2. Transparent fill */}
-                <feFlood floodColor="rgba(255,255,255,0.15)" result="fillTint" />
-                <feComposite operator="in" in="fillTint" in2="SourceAlpha" result="glassFill" />
 
-                {/* 3. Thick blur for Bevel height map */}
+                {/* 2. Thick blur for Bevel height map */}
                 <feGaussianBlur stdDeviation="6" in="SourceAlpha" result="bevelBlur" />
 
-                {/* 4. Top-Left Bevel Highlight */}
+                {/* 3. Top-Left Bevel Highlight */}
                 <feOffset dx="-4" dy="-4" in="bevelBlur" result="bevelHighlightOffset" />
                 <feComposite operator="out" in="bevelHighlightOffset" in2="bevelBlur" result="bevelHighlightDiff" />
                 <feComposite operator="in" in="bevelHighlightDiff" in2="SourceAlpha" result="bevelHighlightMask" />
                 <feFlood floodColor="#ffffff" floodOpacity="0.8" result="whiteGlow" />
                 <feComposite operator="in" in="whiteGlow" in2="bevelHighlightMask" result="bevelHighlight" />
 
-                {/* 5. Bottom-Right Bevel Shadow */}
+                {/* 4. Bottom-Right Bevel Shadow */}
                 <feOffset dx="4" dy="4" in="bevelBlur" result="bevelShadowOffset" />
                 <feComposite operator="out" in="bevelShadowOffset" in2="bevelBlur" result="bevelShadowDiff" />
                 <feComposite operator="in" in="bevelShadowDiff" in2="SourceAlpha" result="bevelShadowMask" />
                 <feFlood floodColor="#000000" floodOpacity="0.6" result="blackGlow" />
                 <feComposite operator="in" in="blackGlow" in2="bevelShadowMask" result="bevelShadow" />
 
-                {/* 6. Sharp Specular Highlight (The glossy plastic reflection) */}
+                {/* 5. Sharp Specular Highlight */}
                 <feGaussianBlur stdDeviation="3" in="SourceAlpha" result="specularBlur" />
                 <feSpecularLighting in="specularBlur" surfaceScale="8" specularConstant="2.5" specularExponent="45" lightingColor="#ffffff" result="specularRaw">
                   <feDistantLight azimuth="225" elevation="55" />
                 </feSpecularLighting>
                 <feComponentTransfer in="specularRaw" result="specular">
-                  {/* Threshold the specular lighting to remove the base grey on flat surfaces */}
                   <feFuncA type="linear" slope="4" intercept="-1" />
                 </feComponentTransfer>
                 <feComposite in="specular" in2="SourceAlpha" operator="in" result="specularMasked" />
                 
-                {/* 7. Thin inner bright edge to simulate refraction line */}
+                {/* 6. Thin inner bright edge */}
                 <feOffset dx="0" dy="0" in="SourceAlpha" result="innerEdgeOffset" />
                 <feGaussianBlur stdDeviation="1.5" in="innerEdgeOffset" result="innerEdgeBlur" />
                 <feComposite operator="out" in="SourceAlpha" in2="innerEdgeBlur" result="innerEdgeMask" />
                 <feFlood floodColor="#ffffff" floodOpacity="0.6" result="innerEdgeColor" />
                 <feComposite operator="in" in="innerEdgeColor" in2="innerEdgeMask" result="innerEdge" />
 
-                {/* 8. Thin outer dark edge for contrast */}
+                {/* 7. Thin outer dark edge */}
                 <feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated" />
                 <feComposite operator="out" in="dilated" in2="SourceAlpha" result="outerEdgeMask" />
                 <feFlood floodColor="rgba(0,0,0,0.3)" result="outerEdgeColor" />
                 <feComposite operator="in" in="outerEdgeColor" in2="outerEdgeMask" result="outerEdge" />
 
-                {/* Merge everything together */}
+                {/* Merge everything together with SourceGraphic */}
                 <feMerge>
                   <feMergeNode in="dropShadow" />
                   <feMergeNode in="outerEdge" />
-                  <feMergeNode in="glassFill" />
+                  <feMergeNode in="SourceGraphic" /> {/* Uses the true SVG gradient fill */}
                   <feMergeNode in="bevelShadow" />
                   <feMergeNode in="bevelHighlight" />
                   <feMergeNode in="innerEdge" />
@@ -451,6 +454,7 @@ export function HeroSection() {
                       textAnchor="middle"
                       dominantBaseline="central"
                       className="build-letter-solid"
+                      fill="url(#glass-gradient)"
                       filter="url(#glass-3d)"
                     >
                       {item.char}
@@ -581,23 +585,42 @@ export function HeroSection() {
           display: inline-block;
           will-change: transform, opacity;
           
-          /* Entrance Animation (Pop in like balloons) */
+          /* Slide in from left */
           opacity: 0;
-          transform: scale(0.4) translateY(60px) rotate(-10deg);
-          transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transform: translateX(-150px) scale(0.8);
+          transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
           transition-delay: calc(0.1s + var(--i) * 0.12s);
         }
 
         .build-letter-group--in {
           opacity: 1;
-          transform: scale(1) translateY(0) rotate(0deg);
+          transform: translateX(0) scale(1);
         }
 
         .build-letter-solid {
           font-family: 'Titan One', system-ui, sans-serif;
           font-size: 175px;
           font-weight: 900;
-          fill: #ffffff;
+          
+          /* SVG line drawing properties */
+          fill-opacity: 0; /* Start completely transparent to only show stroke */
+          stroke: rgba(255, 255, 255, 0.8);
+          stroke-width: 2px;
+          stroke-dasharray: 1800;
+          stroke-dashoffset: 1800;
+          
+          /* Draw outline, then fade in glass fill */
+          animation: 
+            drawStroke 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+            fadeGlass 0.8s ease-in forwards;
+          animation-delay: calc(0.1s + var(--i) * 0.12s), calc(1.4s + var(--i) * 0.12s);
+        }
+
+        @keyframes drawStroke {
+          to { stroke-dashoffset: 0; }
+        }
+        @keyframes fadeGlass {
+          to { fill-opacity: 1; }
         }
 
         /* Subtle balloon bobbing animation */
